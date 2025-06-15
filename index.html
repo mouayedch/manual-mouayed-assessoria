@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual Mouayed Assessoria</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+        .page {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 2rem 1rem;
+            box-sizing: border-box;
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        .cover-page {
+            background-image: url('20eea770-a653-40f5-8e05-8c5b0d5e07c1.jpg'); /* Define a imagem de fundo */
+            background-size: cover; /* Garante que a imagem cubra toda a área */
+            background-position: center; /* Centraliza a imagem */
+            background-color: #1a2a47; /* Cor de fundo de fallback */
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            /* Adiciona uma sobreposição para melhorar a legibilidade do texto */
+            background-blend-mode: multiply; /* Para escurecer a imagem */
+        }
+        .cover-page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.4); /* Escurece a imagem para o texto sobressair */
+            z-index: 1; /* Garante que a sobreposição esteja abaixo do conteúdo de texto */
+        }
+        .cover-content {
+            position: relative; /* Para garantir que o conteúdo fique acima da sobreposição */
+            z-index: 2; /* Acima da sobreposição */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            padding: 2rem; /* Adiciona algum padding */
+        }
+        .cover-footer {
+            position: absolute;
+            bottom: 2rem;
+            left: 0;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            font-size: 0.875rem;
+            color: #fff;
+            z-index: 2; /* Acima da sobreposição */
+        }
+        .content-page {
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        h1, h2, h3, h4 {
+            color: #1a2a47;
+            font-weight: 600;
+        }
+        .toc-link {
+            display: block;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: #e0e7ff;
+            border-radius: 0.5rem;
+            color: #333;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        .toc-link:hover {
+            background-color: #c7d2fe;
+        }
+        .toc-link.sub-section {
+            padding-left: 2.5rem;
+            background-color: #ebf0ff;
+        }
+        .toc-link.sub-sub-section {
+            padding-left: 3.5rem;
+            background-color: #f3f6ff;
+        }
+        .header-section {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.875rem;
+            color: #666;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+        .footer-section {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.875rem;
+            color: #666;
+            margin-top: 2rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid #eee;
+        }
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        .footer-content span {
+            margin-top: 0.25rem;
+        }
+        .gemini-feature-container {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.75rem;
+            background-color: #f9fafb;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        .gemini-button {
+            background-color: #4f46e5;
+            color: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .gemini-button:hover {
+            background-color: #4338ca;
+        }
+        .gemini-output {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #e0e7ff;
+            border-radius: 0.5rem;
+            white-space: pre-wrap; /* Preserve whitespace and line breaks */
+            word-wrap: break-word; /* Break long words */
+            min-height: 3rem; /* Ensure visibility even if empty */
+        }
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4f46e5;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: none; /* Hidden by default */
+        }
+        .loading-spinner.active {
+            display: block;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Forcing chapters to start on a new "page" */
+        .chapter-start {
+            page-break-before: always;
+            margin-top: 0; /* Reset margin-top to avoid extra space at the top of a new page */
+            padding-top: 2rem; /* Add padding at the top of the new page */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Página de Capa -->
+    <div class="page cover-page">
+        <div class="cover-content">
+            <h1 class="text-6xl md:text-7xl lg:text-8xl font-extrabold mb-6">MOUAYED ASSESSORIA</h1>
+            <h2 class="text-3xl md:text-4xl lg:text-5xl font-semibold">MANUAL COMPLETO DE SERVIÇOS E TREINAMENTOS</h2>
+        </div>
+        <div class="cover-footer">
+            <span>CHAHINEMOUAYED@GMAIL.COM</span>
+            <span>(11) 95892-0382</span>
+            <span>@ MOUAYED_ASSESSORIA</span>
+        </div>
+    </div>
+
+    <!-- Página de Sumário -->
+    <div class="page content-page">
+        <div class="header-section">
+            <span>Mouayed Assessoria - Manual Completo</span>
+            <span>--- PÁGINA 2 ---</span>
+        </div>
+        <h1 class="text-3xl font-bold mb-6 text-center">Sumário</h1>
+
+        <a href="#visao-geral" class="toc-link">Capítulo 1: Visão Geral da Assessoria</a>
+        <a href="#otimizacao-processos" class="toc-link">Capítulo 2: Otimização de Processos e Criação de Manuais de Treinamento</a>
+        <a href="#primeiro-contato" class="toc-link sub-section">2.1. Primeiro Contato e Alinhamento Inicial</a>
+        <a href="#verificacao-documentacao" class="toc-link sub-section">2.2. Verificação da Integridade da Empresa e Documentação</a>
+        <a href="#integracao-bling" class="toc-link sub-section">2.3. Integração do Sistema Bling ERP/Marketplace</a>
+        <a href="#implementacao-bling-erp" class="toc-link sub-sub-section">2.3.1. Implementação do Bling ERP (Parceria e Benefícios)</a>
+        <a href="#configuracao-contas" class="toc-link sub-sub-section">2.3.2. Configuração Inicial e Conexão de Contas</a>
+        <a href="#produtos-estoque-precificacao" class="toc-link sub-sub-section">2.3.3. Configuração de Produtos, Estoque e Precificação</a>
+        <a href="#nfe-integracao-financeira" class="toc-link sub-sub-section">2.3.4. Configuração de Emissão de Notas Fiscais e Integração Financeira</a>
+        <a href="#acompanhamento-estrategico" class="toc-link sub-section">2.4. Acompanhamento Contínuo e Atualização Estratégica</a>
+        <a href="#treinamento-produtos" class="toc-link">Capítulo 3: Treinamento e Implantação de Produtos</a>
+        <a href="#treinamento-presencial" class="toc-link sub-section">3.1. Processo de Treinamento Presencial</a>
+        <a href="#conteudo-treinamento" class="toc-link sub-section">3.2. Conteúdo do Treinamento Presencial (Tópicos Principais)</a>
+        <a href="#lideranca-delegacao" class="toc-link">Capítulo 4: Desenvolvimento de Liderança, Delegação e Gestão de Equipe</a>
+        <a href="#recrutamento-formacao" class="toc-link sub-section">4.1. Processo de Recrutamento e Formação da Equipe</a>
+        <a href="#remuneracao-progressiva" class="toc-link sub-section">4.2. Modelo de Remuneração Progressiva (Baseado na Fidelização)</a>
+        <a href="#suporte-continuo" class="toc-link sub-section">4.3. Suporte Contínuo (Papel do Mentor e Suporte 24 Horas)</a>
+
+        <div class="footer-section">
+            <span>Email: chahinemouayed@gmail.com | Telefone: (11) 95892-0382 | Instagram: @mouayed_assessoria</span>
+        </div>
+    </div>
+
+    <!-- Conteúdo do Manual a partir da Página 3 -->
+    <div class="page content-page chapter-start" id="visao-geral">
+        <div class="header-section">
+            <span>Mouayed Assessoria - Manual Completo</span>
+            <span>--- PÁGINA 3 ---</span>
+        </div>
+        <h2 class="text-2xl font-semibold mb-4">Capítulo 1: Visão Geral da Assessoria</h2>
+        <p class="mb-4" id="chapter1-content">Nossa assessoria oferece um serviço completo, "do início ao fim", para empresas que trabalham com marketplaces ou que estão sendo introduzidas a esse ambiente. Nosso modelo se baseia em uma fidelização semanal com o cliente, garantindo um acompanhamento contínuo e uma parceria de longo prazo. Atuamos como o "conforto" para o cliente, transformando dúvidas em assertividade e mostrando o caminho certo para começar e crescer no marketplace. Não se trata apenas de vender, mas de construir uma operação online sólida e lucrativa.</p>
+
+        <div class="gemini-feature-container">
+            <button class="gemini-button" id="chapter1-tip-button" onclick="getStrategicTip('chapter1-content', 'chapter1-tip-output', 'chapter1-tip-button')">
+                ✨ Gerar Dica Estratégica
+                <div id="chapter1-tip-spinner" class="loading-spinner"></div>
+            </button>
+            <div id="chapter1-tip-output" class="gemini-output"></div>
+        </div>
+
+        <div class="footer-section">
+            <span>Email: chahinemouayed@gmail.com | Telefone: (11) 95892-0382 | Instagram: @mouayed_assessoria</span>
+        </div>
+    </div>
+
+    <div class="page content-page chapter-start" id="otimizacao-processos">
+        <div class="header-section">
+            <span>Mouayed Assessoria - Manual Completo</span>
+            <span>--- PÁGINA 4 ---</span>
+        </div>
+        <h2 class="text-2xl font-semibold mb-4">Capítulo 2: Otimização de Processos e Criação de Manuais de Treinamento</h2>
+        <p class="mb-4" id="chapter2-content">Esta seção descreve o fluxo de trabalho padronizado da nossa assessoria, garantindo eficiência, qualidade e replicabilidade do serviço.</p>
+
+        <div class="gemini-feature-container">
+            <button class="gemini-button" id="chapter2-tip-button" onclick="getStrategicTip('chapter2-content', 'chapter2-tip-output', 'chapter2-tip-button')">
+                ✨ Gerar Dica Estratégica
+                <div id="chapter2-tip-spinner" class="loading-spinner"></div>
+            </button>
+            <div id="chapter2-tip-output" class="gemini-output"></div>
+        </div>
+
+        <h3 class="text-xl font-semibold mb-3" id="primeiro-contato">2.1. Primeiro Contato e Alinhamento Inicial</h3>
+        <p class="mb-2"><strong>Objetivo:</strong> Estabelecer um relacionamento de confiança, entender as necessidades do cliente e apresentar a proposta de valor da assessoria.</p>
+        <p class="mb-2"><strong>Procedimento:</strong> Abordagem proativa e consultiva, focando em como a assessoria pode resolver as dores e otimizar os resultados do cliente. Explicamos que o mercado de vendas em marketplace é um campo vasto, aberto para qualquer segmento, e que a chave é focar no produto com o qual o cliente tem conforto e paixão em trabalhar. Nosso papel é ser o guia, transformando dúvidas em assertividade e acelerando resultados.</p>
+        <p class="mb-4"><strong>Benefício:</strong> Oferecer "segurança e assertividade" ao cliente desde o primeiro momento, mostrando que ele não precisará se preocupar com a complexidade inicial e terá um guia ao seu lado.</p>
+
+        <h3 class="text-xl font-semibold mb-3" id="verificacao-documentacao">2.2. Verificação da Integridade da Empresa e Documentação</h3>
+        <p class="mb-2"><strong>Objetivo:</strong> Assegurar que o cliente possui a documentação necessária para operar legalmente nos marketplaces e emitir notas fiscais.</p>
+        <p class="mb-2"><strong>Procedimento:</strong> Análise de CNPJ: Realizamos a verificação da situação cadastral do CNPJ do cliente, confirmando se está ativo e se as atividades principais (CNAEs) estão alinhadas com o tipo de produto que o cliente pretende vender.</p>
+        <p class="mb-2"><strong>Certificado Digital A1:</strong> Assumimos a responsabilidade pela análise e, se necessário, emissão do Certificado Digital.</p>
+        <ul class="list-disc ml-6 mb-4">
+            <li><strong>Verificação da Validade:</strong> Conferimos a data de validade de certificados existentes.</li>
+            <li><strong>Verificação do Tipo (A1):</strong> É crucial que o certificado seja do tipo A1, que permite maior flexibilidade e integração, sendo mais adequado para operações em marketplace.</li>
+            <li><strong>Aquisição/Emissão (se necessário):</strong> Se o cliente não possuir um certificado digital ou se ele não for do tipo A1, agimos rapidamente através de nossa empresa parceira para facilitar a emissão de um novo certificado A1, garantindo o melhor preço e um processo ágil para o cliente.</li>
+            <li><strong>Orientações ao Cliente:</strong> Mesmo assumindo o processo, orientamos o cliente sobre a importância de guardar a senha do certificado em local seguro e sobre futuras renovações.</li>
+        </ul>
+
+        <div class="footer-section">
+            <span>Email: chahinemouayed@gmail.com | Telefone: (11) 95892-0382 | Instagram: @mouayed_assessoria</span>
+        </div>
+    </div>
+
+    <div class="page content-page" id="integracao-bling">
+        <div class="header-section">
+            <span>Mouayed Assessoria - Manual Completo</span>
+            <span>--- PÁGINA 5 ---</span>
+        </div>
+        <h3 class="text-xl font-semibold mb-3">2.3. Integração do Sistema Bling ERP/Marketplace</h3>
+        <p class="mb-4" id="section2-3-content">Esta etapa é a espinha dorsal tecnológica da operação do seu cliente, centralizando a gestão de e-commerce e as operações internas através do Bling ERP. Nossa assessoria garante não apenas a implementação, mas também a otimização de custos e a configuração completa, inclusive a criação das contas nos marketplaces.</p>
+
+        <h4 class="text-lg font-semibold mb-2" id="implementacao-bling-erp">2.3.1. Implementação do Bling ERP (Parceria e Benefícios)</h4>
+        <p class="mb-2"><strong>Objetivo:</strong> Prover o cliente com uma plataforma robusta e integrada para gerenciar seu negócio, com um benefício financeiro exclusivo.</p>
+        <p class="mb-4"><strong>Como fazemos:</strong></p>
+        <ul class="list-disc ml-6 mb-4">
+            <li>Recomendamos e implementamos o Bling ERP como nossa solução padrão devido à sua versatilidade e eficácia para operações em marketplace.</li>
+            <li>Graças à nossa parceria, o cliente recebe um desconto exclusivo de 4 meses na mensalidade do Bling, o que representa uma economia considerável e um incentivo adicional para a adesão.</li>
+            <li>Toda a configuração e instalação do Bling é realizada por nós, de forma guiada, e está inclusa na assessoria, reforçando a proposta de valor "sem preocupações" para o cliente.</li>
+        </ul>
+
+        <h4 class="text-lg font-semibold mb-2" id="configuracao-contas">2.3.2. Configuração Inicial e Conexão de Contas</h4>
+        <p class="mb-2"><strong>Objetivo:</strong> Estabelecer a base do sistema, criar e conectar as contas do cliente aos canais de venda online.</p>
+        <p class="mb-4"><strong>Ações Práticas:</strong></p>
+        <ul class="list-disc ml-6 mb-4">
+            <li><strong>Criação e Configuração da Conta Bling:</strong> Criamos a conta do cliente no Bling e realizamos as configurações iniciais (dados da empresa, informações cadastrais).</li>
+            <li><strong>Criação e Cadastro de Contas em Marketplaces:</strong> Realizamos o processo de cadastro das contas do cliente nos principais marketplaces onde ele deseja atuar (ex: Mercado Livre, Shopee, Amazon, Magalu, etc.), incluindo preenchimento de formulários, configuração de informações básicas e garantia de que as contas estejam prontas para receber produtos.</li>
+            <li><strong>Conexão do Bling com Marketplaces:</strong> Após o cadastro, realizamos o processo de conexão do Bling com essas contas de marketplace, configurando as APIs e credenciais necessárias para a sincronização.</li>
+            <li><strong>Configurações Básicas do ERP:</strong> Configuramos os módulos essenciais do Bling, como dados bancários para contas a receber/pagar, e as configurações fiscais preliminares para a emissão de Notas Fiscais.</li>
+        </ul>
+
+        <div class="footer-section">
+            <span>Email: chahinemouayed@gmail.com | Telefone: (11) 95892-0382 | Instagram: @mouayed_assessoria</span>
+        </div>
+    </div>
+
+    <div class="page content-page" id="produtos-estoque-precificacao">
+        <div class="header-section">
+            <span>Mouayed Assessoria - Manual Completo</span>
+            <span>--- PÁGINA 6 ---</span>
+        </div>
+        <h4 class="text-lg font-semibold mb-2">2.3.3. Configuração de Produtos, Estoque e Precificação</h4>
+        <p class="mb-2"><strong>Objetivo:</strong> Assegurar que os produtos estejam corretamente cadastrados no Bling e sejam sincronizados de forma eficiente com os marketplaces.</p>
+        <p class="mb-4"><strong>Ações Práticas:</strong></p>
+        <ul class="list-disc ml-6 mb-4">
+            <li><strong>Importação de Produtos:</strong> Auxiliamos na importação dos produtos do cliente para o Bling (via planilha ou de loja virtual existente).</li>
+            <li><strong>Sincronização de Estoque:</strong> Configuramos as regras de sincronização de estoque no Bling para garantir que o estoque seja automaticamente atualizado em todos os marketplaces, evitando vendas duplicadas.</li>
+            <li><strong>Estratégias de Precificação:</strong> Orientamos ou ajudamos a configurar as regras de precificação dentro do Bling, levando em conta os custos do produto, taxas de marketplace, custos de frete e a margem de lucro desejada pelo cliente.</li>
+        </ul>
+
+        <h4 class="text-lg font-semibold mb-2" id="nfe-integracao-financeira">2.3.4. Configuração de Emissão de Notas Fiscais e Integração Financeira</h4>
+        <p class="mb-2"><strong>Objetivo:</strong> Automatizar processos fiscais e financeiros para maior eficiência.</p>
+        <p class="mb-4"><strong>Ações Práticas:</strong></p>
+        <ul class="list-disc ml-6 mb-4">
+            <li><strong>Configuração de NF-e:</strong> O certificado digital A1 é integrado ao Bling para automatizar a emissão de Notas Fiscais Eletrônicas (NF-e) de forma descomplicada.</li>
+            <li><strong>Gestão Financeira:</strong> Configuramos os módulos financeiros básicos do Bling para que o cliente possa acompanhar seu fluxo de caixa, contas a pagar e a receber.</li>
+            <li><strong>Relatórios Essenciais:</strong> Orientamos o cliente sobre como acessar e interpretar os relatórios chave no Bling que monitoram o desempenho de vendas e financeiro.</li>
+        </ul>
+
+        <h3 class="text-xl font-semibold mb-3" id="acompanhamento-estrategico">2.4. Acompanhamento Contínuo e Atualização Estratégica</h3>
+        <p class="mb-2"><strong>Objetivo:</strong> Manter o cliente sempre à frente no mercado, otimizando performance e aproveitando novas oportunidades.</p>
+        <p class="mb-4"><strong>Procedimento:</strong></p>
+        <ul class="list-disc ml-6 mb-4">
+            <li><strong>Acompanhamento de Campanhas de ADS:</strong> Monitoramento contínuo e otimização das campanhas de publicidade (ADS) nas diversas plataformas de marketplace, ajustando lances, palavras-chave e segmentação para maximizar o ROI do cliente.</li>
+            <li><strong>Atualização Semanal das Novidades:</strong> Mantemos o cliente constantemente informado sobre as últimas tendências, funcionalidades e atualizações dos marketplaces e do Bling ERP. Isso inclui novas ferramentas, mudanças nas políticas, e melhores práticas de mercado.</li>
+        </ul>
+        <p class="mb-4"><strong>Benefício:</strong> Garantir que o cliente tenha acesso às melhores ferramentas e esteja sempre atualizado, permitindo que ele se adapte rapidamente e mantenha a competitividade no ambiente dinâmico do e-commerce.</p>
+
+        <div class="footer-section">
+            <span>Email: chahinemouayed@gmail.com | Telefone: (11) 95892-0382 | Instagram: @mouayed_assessoria</span>
+        </div>
+    </div>
+
+    <div class="page content-page chapter-start" id="treinamento-produtos">
+        <div class="header-section">
+            <span>Mouayed Assessoria - Manual Completo</span>
+            <span>--- PÁGINA 7 ---</span>
+        </div>
+        <h2 class="text-2xl font-semibold mb-4">Capítulo 3: Treinamento e Implantação de Produtos</h2>
+        <p class="mb-4" id="chapter3-content">Esta etapa é onde o cliente começa a ver seus produtos ganhando vida nos marketplaces. Nosso treinamento visa capacitar o cliente e sua equipe a otimizar o cadastro de produtos e a gerenciar suas operações de forma autônoma.</p>
+
+        <h3 class="text-xl font-semibold mb-3" id="treinamento-presencial">3.1. Processo de Treinamento Presencial</h3>
+        <p class="mb-2" id="section3-1-content"><strong>Formato:</strong> O treinamento é realizado presencialmente, com duração de um ou mais dias, dependendo do volume de produtos, complexidade do negócio e tamanho da equipe do cliente. O foco é na prática e na personalização.</p>
+        <p class="mb-4"><strong>Etapas do Treinamento:</strong></p>
+        <ul class="list-decimal ml-6 mb-4">
+            <li><strong>Etapa 1: Demonstração Guiada ("Eu Faço, Vocês Observam"):</strong>
+                <p class="ml-4"><strong>Objetivo:</strong> Apresentar o processo ideal de cadastro e gestão de produtos de forma clara e visual.</p>
+                <p class="ml-4"><strong>Ação:</strong> Executamos o procedimento completo de otimização e implantação de produtos no Bling e nos marketplaces (títulos, descrições, fotos, categorização, etc.), explicando cada passo detalhadamente.</p>
+            </li>
+            <li><strong>Etapa 2: Prática Assistida ("Vocês Fazem, Eu Auxilio"):</strong>
+                <p class="ml-4"><strong>Objetivo:</strong> Permitir que a equipe comece a praticar sob nossa orientação imediata, tirando dúvidas em tempo real.</p>
+                <p class="ml-4"><strong>Ação:</strong> A equipe do cliente começa a realizar o procedimento, e nós auxiliamos ativamente, corrigindo pequenos desvios e respondendo a perguntas.</p>
+            </li>
+            <li><strong>Etapa 3: Execução Autônoma Supervisionada ("Vocês Fazem Sozinhos, Eu Observo"):</strong>
+                <p class="ml-4"><strong>Objetivo:</strong> Avaliar a capacidade da equipe de executar o processo de forma independente.</p>
+                <p class="ml-4"><strong>Ação:</strong> A equipe do cliente executa o procedimento por conta própria, com nossa observação para identificar inseguranças ou erros recorrentes.</p>
+            </li>
+            <li><strong>Etapa 4: Feedback Personalizado e Reforço de Dificuldades ("Correção e Foco em Melhoria"):</strong>
+                <p class="ml-4"><strong>Objetivo:</strong> Corrigir erros, esclarecer dúvidas e focar no aprimoramento das áreas de maior dificuldade individual.</p>
+                <p class="ml-4"><strong>Ação:</strong> Fornecemos feedback construtivo, corrigindo erros e focando em melhorar os pontos específicos de cada pessoa até a compreensão e execução estarem solidificadas.</p>
+            </li>
+        </ul>
+
+        <div class="gemini-feature-container">
+            <button class="gemini-button" id="section3-1-script-button" onclick="generateTrainingScript('section3-1-content', 'section3-1-script-output', 'section3-1-script-button')">
+                ✨ Gerar Roteiro de Treinamento
+                <div id="section3-1-script-spinner" class="loading-spinner"></div>
+            </button>
+            <div id="section3-1-script-output" class="gemini-output"></div>
+        </div>
+
+        <div class="footer-section">
+            <span>Email: chahinemouayed@gmail.com | Telefone: (11) 95892-0382 | Instagram: @mouayed_assessoria</span>
+        </div>
+    </div>
+
+    <div class="page content-page" id="conteudo-treinamento-part2">
+        <div class="header-section">
+            <span>Mouayed Assessoria - Manual Completo</span>
+            <span>--- PÁGINA 8 ---</span>
+        </div>
+        <h3 class="text-xl font-semibold mb-3">3.2. Conteúdo do Treinamento Presencial (Tópicos Principais)</h3>
+        <p class="mb-4" id="section3-2-content">Durante as sessões presenciais, o treinamento aborda os seguintes pilares:</p>
+        <ul class="list-decimal ml-6 mb-4">
+            <li><strong>Otimização e Cadastro de Produtos para SEO:</strong> Como criar títulos e descrições que aparecem nos resultados de busca dos marketplaces e convertem vendas, usando palavras-chave e ficha técnica completa.</li>
+            <li><strong>Qualidade de Anúncios e Fotos:</strong> Requisitos de imagem, uso de fotos de alta resolução, diferentes ângulos, fotos de contexto, infográficos.</li>
+            <li><strong>Criação de Conteúdo (Fotos e Vídeos):</strong> Dicas para produção de fotos e vídeos de qualidade, storytelling visual e demonstração de uso.</li>
+            <li><strong>Controle de Estoque Eficaz (via Bling ERP):</strong> Configuração de estoque no Bling, sincronização automática com marketplaces, gestão de múltiplos depósitos e inventário.</li>
+            <li><strong>Precificação Estratégica e Análise de Margens:</strong> Cálculo detalhado de precificação (custos, taxas, frete, impostos), definição de margem de lucro e estratégias de precificação.</li>
+            <li><strong>Estratégias de Marketing Envolvendo o Produto:</strong> Publicidade paga nos marketplaces (Mercado Livre Ads, Shopee Ads, etc.), campanhas de e-mail marketing, uso de redes sociais para direcionar tráfego, criação de kits e combos.</li>
+            <li><strong>Gestão de Pedidos (Bling ERP): Nota Fiscal Automatizada e Impressão de Etiquetas:</strong> Configuração de NF-e automatizada via Bling, impressão de etiquetas de envio e acompanhamento de status de pedidos.</li>
+            <li><strong>Explicação Rápida de Embalagens e Despacho:</strong> Tipos de embalagem adequados, proteção interna, orientações sobre pesagem e cubagem, agendamento de coleta ou postagem.</li>
+            <li><strong>Treinamento de SAC (Suporte ao Cliente Pré-venda e Pós-venda):</strong> Melhores práticas para responder perguntas, gerenciamento de reclamações, pós-venda ativo e impacto da reputação.</li>
+            <li><strong>Pesquisa de Concorrentes:</strong> Ferramentas para análise de concorrência, identificação de produtos mais vendidos, análise de preços e estratégias, identificação de lacunas.</li>
+            <li><strong>Análise de Métricas e Relatórios (Bling e Marketplaces):</strong> Como interpretar dados de vendas, performance de anúncios, taxa de conversão e custos de marketing para otimização.</li>
+            <li><strong>Automação de Tarefas e Uso Eficiente do Tempo:</strong> Dicas de automação dentro do Bling (regras de preço, mensagens automáticas), organização do fluxo de trabalho diário/semanal e ferramentas de produtividade.</li>
+        </ul>
+
+        <div class="gemini-feature-container">
+            <button class="gemini-button" id="section3-2-script-button" onclick="generateTrainingScript('section3-2-content', 'section3-2-script-output', 'section3-2-script-button')">
+                ✨ Gerar Roteiro de Treinamento
+                <div id="section3-2-script-spinner" class="loading-spinner"></div>
+            </button>
+            <div id="section3-2-script-output" class="gemini-output"></div>
+        </div>
+
+        <div class="footer-section">
+            <span>Email: chahinemouayed@gmail.com | Telefone: (11) 95892-0382 | Instagram: @mouayed_assessoria</span>
+        </div>
+    </div>
+
+    <div class="page content-page chapter-start" id="lideranca-delegacao">
+        <div class="header-section">
+            <span>Mouayed Assessoria - Manual Completo</span>
+            <span>--- PÁGINA 9 ---</span>
+        </div>
+        <h2 class="text-2xl font-semibold mb-4">Capítulo 4: Desenvolvimento de Liderança, Delegação e Gestão de Equipe</h2>
+        <p class="mb-4" id="chapter4-content">Esta seção detalha o processo de recrutamento, formação e gestão da equipe, permitindo a escala do negócio através da replicação do conhecimento e da manutenção da qualidade do serviço.</p>
+
+        <div class="gemini-feature-container">
+            <button class="gemini-button" id="chapter4-tip-button" onclick="getStrategicTip('chapter4-content', 'chapter4-tip-output', 'chapter4-tip-button')">
+                ✨ Gerar Dica Estratégica
+                <div id="chapter4-tip-spinner" class="loading-spinner"></div>
+            </button>
+            <div id="chapter4-tip-output" class="gemini-output"></div>
+        </div>
+
+        <h3 class="text-xl font-semibold mb-3" id="recrutamento-formacao">4.1. Processo de Recrutamento e Formação da Equipe</h3>
+        <p class="mb-2">Este processo visa identificar, capacitar e integrar novos membros à equipe, garantindo que estejam aptos a replicar a metodologia de assessoria, com a liderança atuando como mentor e suporte estratégico.</p>
+        <ul class="list-decimal ml-6 mb-4">
+            <li><strong>Seleção Inicial: Análise de Capacidade Via Call:</strong>
+                <p class="ml-4"><strong>Objetivo:</strong> Avaliar o potencial do candidato, sua aptidão para aprender, comunicação e alinhamento cultural.</p>
+                <p class="ml-4"><strong>Ação:</strong> Realização de reunião via chamada (call) para apresentar o modelo de trabalho, investigar experiência prévia e aplicar perguntas situacionais, avaliando raciocínio lógico, proatividade e desejo de aprender.</p>
+            </li>
+            <li><strong>Treinamento Intensivo (Teórico e Prático - Período Não Remunerado):</strong>
+                <p class="ml-4"><strong>Objetivo:</strong> Capacitar o candidato com todo o conhecimento e prática necessários para executar o serviço de assessoria de forma independente. Este período funciona como um curso intensivo sem compromisso financeiro inicial.</p>
+                <p class="ml-4"><strong>Fase Teórica (7 a 14 dias):</strong> Condução de treinamento intensivo cobrindo todos os tópicos detalhados na Seção 2.2.</p>
+                <p class="ml-4"><strong>Fase Prática (14 dias de Acompanhamento):</strong> O candidato acompanhará o mentor em suas interações com clientes reais, observando a aplicação do conteúdo teórico e a dinâmica do relacionamento com o cliente.</p>
+            </li>
+            <li><strong>Avaliação Pós-Período Educacional e Entrada na Equipe:</strong>
+                <p class="ml-4"><strong>Objetivo:</strong> Analisar a aptidão do candidato após o treinamento e decidir pela contratação.</p>
+                <p class="ml-4"><strong>Ação:</strong> Ao final do período de 14 dias de acompanhamento, será realizada uma avaliação detalhada do desempenho e aprendizado. Se considerado apto, o candidato será convidado a entrar oficialmente na equipe e receberá um cliente (ou clientes) para começar a assessorar.</p>
+            </li>
+        </ul>
+        <div class="footer-section">
+            <span>Email: chahinemouayed@gmail.com | Telefone: (11) 95892-0382 | Instagram: @mouayed_assessoria</span>
+        </div>
+    </div>
+
+    <div class="page content-page" id="remuneracao-progressiva">
+        <div class="header-section">
+            <span>Mouayed Assessoria - Manual Completo</span>
+            <span>--- PÁGINA 10 ---</span>
+        </div>
+        <h3 class="text-xl font-semibold mb-3">4.2. Modelo de Remuneração Progressiva (Baseado na Fidelização)</h3>
+        <p class="mb-2"><strong>Objetivo:</strong> Oferecer uma compensação justa e crescente, incentivando a permanência e o desenvolvimento do assessor.</p>
+        <p class="mb-4"><strong>Estrutura:</strong> O assessor receberá uma porcentagem do valor mensal pago pelo cliente, que aumentará progressivamente:</p>
+        <ul class="list-disc ml-6 mb-4">
+            <li><strong>Primeiro e Segundo Mês de Assessoria:</strong> 40% do valor da assessoria por cliente.</li>
+            <li><strong>Terceiro ao Sexto Mês de Assessoria:</strong> 45% do valor da assessoria por cliente.</li>
+            <li><strong>A partir do Sétimo Mês de Assessoria:</strong> 50% do valor da assessoria por cliente.</li>
+        </ul>
+        <p class="mb-4">(Exemplo baseado em R$175/assessoria: Meses 1-2: R$ 70,00 por assessoria; Meses 3-6: R$ 78,75 por assessoria; A partir do Mês 7: R$ 87,50 por assessoria.)</p>
+
+        <h3 class="text-xl font-semibold mb-3" id="suporte-continuo">4.3. Suporte Contínuo (Papel do Mentor e Suporte 24 Horas)</h3>
+        <p class="mb-2"><strong>Objetivo:</strong> Garantir a qualidade do serviço e o desenvolvimento contínuo da equipe, mantendo a promessa de atualização e excelência para o cliente final.</p>
+        <p class="mb-4"><strong>Ação:</strong> Mesmo após a contratação, o papel da liderança será de suporte e mentoria contínuos. Isso inclui:</p>
+        <ul class="list-disc ml-6 mb-4">
+            <li>Oferecer suporte 24 horas como um "backbone" para a equipe em casos de dúvidas complexas ou situações desafiadoras com os clientes.</li>
+            <li>Manter a equipe atualizada com as novidades das plataformas e tendências de mercado, garantindo que o conhecimento sobre acompanhamento de ADS e otimização contínua seja repassado e aplicado de forma eficaz.</li>
+        </ul>
+
+        <div class="footer-section">
+            <span>Email: chahinemouayed@gmail.com | Telefone: (11) 95892-0382 | Instagram: @mouayed_assessoria</span>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * Fetches a strategic tip from the Gemini API based on the provided content.
+         * @param {string} contentId The ID of the HTML element containing the content.
+         * @param {string} outputDivId The ID of the HTML element to display the output.
+         * @param {string} buttonId The ID of the button that triggered the request.
+         */
+        async function getStrategicTip(contentId, outputDivId, buttonId) {
+            const contentElement = document.getElementById(contentId);
+            const outputDiv = document.getElementById(outputDivId);
+            const button = document.getElementById(buttonId);
+            const spinner = document.getElementById(buttonId.replace('-button', '-spinner'));
+
+            if (!contentElement || !outputDiv || !button || !spinner) {
+                console.error("Um ou mais elementos não foram encontrados.");
+                return;
+            }
+
+            outputDiv.innerText = ''; // Limpa a saída anterior
+            spinner.classList.add('active'); // Ativa o spinner de carregamento
+            button.disabled = true; // Desabilita o botão para evitar múltiplas chamadas
+
+            const content = contentElement.innerText;
+            const prompt = `Baseado no seguinte conteúdo do manual da Mouayed Assessoria, qual seria uma dica estratégica prática para um assessor aplicar ao interagir com um cliente ou otimizar seus processos? Concentre-se em uma dica acionável. Conteúdo: "${content}"`;
+
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+            const payload = { contents: chatHistory };
+            const apiKey = ""; // API key is provided by Canvas runtime
+
+            try {
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    outputDiv.innerText = text;
+                } else {
+                    outputDiv.innerText = 'Não foi possível gerar a dica estratégica. Tente novamente.';
+                    console.error('Resposta inesperada da API:', result);
+                }
+            } catch (error) {
+                outputDiv.innerText = 'Ocorreu um erro ao conectar-se com a API. Verifique sua conexão ou tente novamente.';
+                console.error('Erro na chamada da API:', error);
+            } finally {
+                spinner.classList.remove('active'); // Desativa o spinner de carregamento
+                button.disabled = false; // Reabilita o botão
+            }
+        }
+
+        /**
+         * Generates a training script from the Gemini API based on the provided section content.
+         * @param {string} contentId The ID of the HTML element containing the section content.
+         * @param {string} outputDivId The ID of the HTML element to display the output.
+         * @param {string} buttonId The ID of the button that triggered the request.
+         */
+        async function generateTrainingScript(contentId, outputDivId, buttonId) {
+            const contentElement = document.getElementById(contentId);
+            const outputDiv = document.getElementById(outputDivId);
+            const button = document.getElementById(buttonId);
+            const spinner = document.getElementById(buttonId.replace('-button', '-spinner'));
+
+            if (!contentElement || !outputDiv || !button || !spinner) {
+                console.error("Um ou mais elementos não foram encontrados.");
+                return;
+            }
+
+            outputDiv.innerText = ''; // Limpa a saída anterior
+            spinner.classList.add('active'); // Ativa o spinner de carregamento
+            button.disabled = true; // Desabilita o botão
+
+            const content = contentElement.innerText;
+            const prompt = `Crie um roteiro de treinamento conciso, em formato de lista de tópicos e com foco em passos práticos, para explicar o seguinte conceito do manual da Mouayed Assessoria a um novo assessor. Não inclua introduções ou conclusões, apenas os tópicos práticos. Conceito: "${content}"`;
+
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+            const payload = { contents: chatHistory };
+            const apiKey = ""; // API key is provided by Canvas runtime
+
+            try {
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    outputDiv.innerText = text;
+                } else {
+                    outputDiv.innerText = 'Não foi possível gerar o roteiro de treinamento. Tente novamente.';
+                    console.error('Resposta inesperada da API:', result);
+                }
+            } catch (error) {
+                outputDiv.innerText = 'Ocorreu um erro ao conectar-se com a API. Verifique sua conexão ou tente novamente.';
+                console.error('Erro na chamada da API:', error);
+            } finally {
+                spinner.classList.remove('active'); // Desativa o spinner de carregamento
+                button.disabled = false; // Reabilita o botão
+            }
+        }
+    </script>
+</body>
+</html>
