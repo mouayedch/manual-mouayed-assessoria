@@ -136,15 +136,118 @@
         .footer-content span {
             margin-top: 0.25rem;
         }
+        /* Remove specific Gemini feature containers */
         .gemini-feature-container {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.75rem;
-            background-color: #f9fafb;
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            display: none;
         }
-        .gemini-button {
+        .gemini-button, .gemini-output, .loading-spinner {
+            display: none; /* Hide previous LLM specific elements */
+        }
+
+        /* Forcing chapters to start on a new "page" */
+        .chapter-start {
+            page-break-before: always;
+            margin-top: 0;
+            padding-top: 2rem;
+        }
+
+        /* Chatbot Modal Styles */
+        .chat-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .chat-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .chat-modal-content {
+            background-color: #fff;
+            border-radius: 0.75rem;
+            width: 90%;
+            max-width: 600px;
+            height: 80%;
+            max-height: 700px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        .chat-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background-color: #1a2a47;
+            color: white;
+            border-top-left-radius: 0.75rem;
+            border-top-right-radius: 0.75rem;
+        }
+        .chat-modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: white;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            transition: background-color 0.2s ease;
+        }
+        .chat-modal-close:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        .chat-messages {
+            flex-grow: 1;
+            padding: 1rem 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            background-color: #f0f4f8;
+        }
+        .message-bubble {
+            max-width: 85%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            word-wrap: break-word;
+        }
+        .message-bubble.user {
+            align-self: flex-end;
+            background-color: #e0e7ff;
+            color: #374151;
+            border-bottom-right-radius: 0;
+        }
+        .message-bubble.gemini {
+            align-self: flex-start;
+            background-color: #d1e7dd; /* A light green for Gemini responses */
+            color: #1f2937;
+            border-bottom-left-radius: 0;
+        }
+        .chat-input-area {
+            display: flex;
+            padding: 1rem;
+            border-top: 1px solid #e5e7eb;
+            background-color: #fff;
+        }
+        .chat-input {
+            flex-grow: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            margin-right: 0.75rem;
+            font-size: 1rem;
+        }
+        .chat-send-button {
             background-color: #4f46e5;
             color: white;
             padding: 0.75rem 1.25rem;
@@ -156,42 +259,31 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            margin-bottom: 1rem;
         }
-        .gemini-button:hover {
+        .chat-send-button:hover {
             background-color: #4338ca;
         }
-        .gemini-output {
-            margin-top: 1rem;
-            padding: 1rem;
-            background-color: #e0e7ff;
-            border-radius: 0.5rem;
-            white-space: pre-wrap; /* Preserve whitespace and line breaks */
-            word-wrap: break-word; /* Break long words */
-            min-height: 3rem; /* Ensure visibility even if empty */
-        }
-        .loading-spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #4f46e5;
+        .chatbot-fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: #4f46e5;
+            color: white;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-            display: none; /* Hidden by default */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.8rem;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+            transition: background-color 0.3s ease, transform 0.2s ease;
         }
-        .loading-spinner.active {
-            display: block;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Forcing chapters to start on a new "page" */
-        .chapter-start {
-            page-break-before: always;
-            margin-top: 0; /* Reset margin-top to avoid extra space at the top of a new page */
-            padding-top: 2rem; /* Add padding at the top of the new page */
+        .chatbot-fab:hover {
+            background-color: #4338ca;
+            transform: scale(1.05);
         }
     </style>
 </head>
@@ -250,14 +342,6 @@
         <h2 class="text-2xl font-semibold mb-4">Capítulo 1: Visão Geral da Assessoria</h2>
         <p class="mb-4" id="chapter1-content">Nossa assessoria oferece um serviço completo, "do início ao fim", para empresas que trabalham com marketplaces ou que estão sendo introduzidas a esse ambiente. Nosso modelo se baseia em uma fidelização semanal com o cliente, garantindo um acompanhamento contínuo e uma parceria de longo prazo. Atuamos como o "conforto" para o cliente, transformando dúvidas em assertividade e mostrando o caminho certo para começar e crescer no marketplace. Não se trata apenas de vender, mas de construir uma operação online sólida e lucrativa.</p>
 
-        <div class="gemini-feature-container">
-            <button class="gemini-button" id="chapter1-tip-button" onclick="getStrategicTip('chapter1-content', 'chapter1-tip-output', 'chapter1-tip-button')">
-                ✨ Gerar Dica Estratégica
-                <div id="chapter1-tip-spinner" class="loading-spinner"></div>
-            </button>
-            <div id="chapter1-tip-output" class="gemini-output"></div>
-        </div>
-
         <div class="footer-section">
             <span>Email: chahinemouayed@gmail.com | Telefone: (11) 95892-0382 | Instagram: @mouayed_assessoria</span>
         </div>
@@ -270,14 +354,6 @@
         </div>
         <h2 class="text-2xl font-semibold mb-4">Capítulo 2: Otimização de Processos e Criação de Manuais de Treinamento</h2>
         <p class="mb-4" id="chapter2-content">Esta seção descreve o fluxo de trabalho padronizado da nossa assessoria, garantindo eficiência, qualidade e replicabilidade do serviço.</p>
-
-        <div class="gemini-feature-container">
-            <button class="gemini-button" id="chapter2-tip-button" onclick="getStrategicTip('chapter2-content', 'chapter2-tip-output', 'chapter2-tip-button')">
-                ✨ Gerar Dica Estratégica
-                <div id="chapter2-tip-spinner" class="loading-spinner"></div>
-            </button>
-            <div id="chapter2-tip-output" class="gemini-output"></div>
-        </div>
 
         <h3 class="text-xl font-semibold mb-3" id="primeiro-contato">2.1. Primeiro Contato e Alinhamento Inicial</h3>
         <p class="mb-2"><strong>Objetivo:</strong> Estabelecer um relacionamento de confiança, entender as necessidades do cliente e apresentar a proposta de valor da assessoria.</p>
@@ -399,14 +475,6 @@
             </li>
         </ul>
 
-        <div class="gemini-feature-container">
-            <button class="gemini-button" id="section3-1-script-button" onclick="generateTrainingScript('section3-1-content', 'section3-1-script-output', 'section3-1-script-button')">
-                ✨ Gerar Roteiro de Treinamento
-                <div id="section3-1-script-spinner" class="loading-spinner"></div>
-            </button>
-            <div id="section3-1-script-output" class="gemini-output"></div>
-        </div>
-
         <div class="footer-section">
             <span>Email: chahinemouayed@gmail.com | Telefone: (11) 95892-0382 | Instagram: @mouayed_assessoria</span>
         </div>
@@ -434,14 +502,6 @@
             <li><strong>Automação de Tarefas e Uso Eficiente do Tempo:</strong> Dicas de automação dentro do Bling (regras de preço, mensagens automáticas), organização do fluxo de trabalho diário/semanal e ferramentas de produtividade.</li>
         </ul>
 
-        <div class="gemini-feature-container">
-            <button class="gemini-button" id="section3-2-script-button" onclick="generateTrainingScript('section3-2-content', 'section3-2-script-output', 'section3-2-script-button')">
-                ✨ Gerar Roteiro de Treinamento
-                <div id="section3-2-script-spinner" class="loading-spinner"></div>
-            </button>
-            <div id="section3-2-script-output" class="gemini-output"></div>
-        </div>
-
         <div class="footer-section">
             <span>Email: chahinemouayed@gmail.com | Telefone: (11) 95892-0382 | Instagram: @mouayed_assessoria</span>
         </div>
@@ -454,14 +514,6 @@
         </div>
         <h2 class="text-2xl font-semibold mb-4">Capítulo 4: Desenvolvimento de Liderança, Delegação e Gestão de Equipe</h2>
         <p class="mb-4" id="chapter4-content">Esta seção detalha o processo de recrutamento, formação e gestão da equipe, permitindo a escala do negócio através da replicação do conhecimento e da manutenção da qualidade do serviço.</p>
-
-        <div class="gemini-feature-container">
-            <button class="gemini-button" id="chapter4-tip-button" onclick="getStrategicTip('chapter4-content', 'chapter4-tip-output', 'chapter4-tip-button')">
-                ✨ Gerar Dica Estratégica
-                <div id="chapter4-tip-spinner" class="loading-spinner"></div>
-            </button>
-            <div id="chapter4-tip-output" class="gemini-output"></div>
-        </div>
 
         <h3 class="text-xl font-semibold mb-3" id="recrutamento-formacao">4.1. Processo de Recrutamento e Formação da Equipe</h3>
         <p class="mb-2">Este processo visa identificar, capacitar e integrar novos membros à equipe, garantindo que estejam aptos a replicar a metodologia de assessoria, com a liderança atuando como mentor e suporte estratégico.</p>
@@ -513,120 +565,133 @@
         </div>
     </div>
 
+    <!-- Chatbot Modal Structure -->
+    <div id="chatModalOverlay" class="chat-modal-overlay">
+        <div class="chat-modal-content">
+            <div class="chat-modal-header">
+                <h3 class="text-xl font-semibold">Pergunte ao Manual ✨</h3>
+                <button class="chat-modal-close" onclick="toggleChatModal()">×</button>
+            </div>
+            <div id="chatMessages" class="chat-messages">
+                <!-- Chat messages will be appended here -->
+                <div class="message-bubble gemini">
+                    Olá! Sou o seu assistente do manual da Mouayed Assessoria. Como posso ajudar hoje? Pergunte-me sobre qualquer tópico no manual!
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" class="chat-input" placeholder="Digite a sua pergunta...">
+                <button id="chatSendButton" class="chat-send-button" onclick="sendChatMessage()">
+                    Enviar
+                    <div id="chatSendSpinner" class="loading-spinner"></div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chatbot Floating Action Button -->
+    <button class="chatbot-fab" onclick="toggleChatModal()">
+        💬
+    </button>
+
     <script>
-        /**
-         * Fetches a strategic tip from the Gemini API based on the provided content.
-         * @param {string} contentId The ID of the HTML element containing the content.
-         * @param {string} outputDivId The ID of the HTML element to display the output.
-         * @param {string} buttonId The ID of the button that triggered the request.
-         */
-        async function getStrategicTip(contentId, outputDivId, buttonId) {
-            const contentElement = document.getElementById(contentId);
-            const outputDiv = document.getElementById(outputDivId);
-            const button = document.getElementById(buttonId);
-            const spinner = document.getElementById(buttonId.replace('-button', '-spinner'));
+        const API_KEY = ""; // A chave da API é fornecida pelo ambiente Canvas em tempo de execução
 
-            if (!contentElement || !outputDiv || !button || !spinner) {
-                console.error("Um ou mais elementos não foram encontrados.");
-                return;
+        // --- Lógica do Chatbot ---
+        const chatModalOverlay = document.getElementById('chatModalOverlay');
+        const chatMessagesDiv = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const chatSendButton = document.getElementById('chatSendButton');
+        const chatSendSpinner = document.getElementById('chatSendSpinner');
+
+        let chatConversationHistory = [{
+            role: "gemini",
+            parts: [{ text: "Olá! Sou o seu assistente do manual da Mouayed Assessoria. Como posso ajudar hoje? Pergunte-me sobre qualquer tópico no manual!" }]
+        }];
+
+        function toggleChatModal() {
+            chatModalOverlay.classList.toggle('active');
+            if (chatModalOverlay.classList.contains('active')) {
+                chatInput.focus(); // Coloca o foco no input quando o modal abre
+                chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight; // Rola para o fim
             }
+        }
 
-            outputDiv.innerText = ''; // Limpa a saída anterior
-            spinner.classList.add('active'); // Ativa o spinner de carregamento
-            button.disabled = true; // Desabilita o botão para evitar múltiplas chamadas
+        function addMessageToChat(role, text) {
+            const messageBubble = document.createElement('div');
+            messageBubble.classList.add('message-bubble');
+            messageBubble.classList.add(role);
+            messageBubble.innerText = text;
+            chatMessagesDiv.appendChild(messageBubble);
+            chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight; // Rola automaticamente para a última mensagem
+        }
 
-            const content = contentElement.innerText;
-            const prompt = `Baseado no seguinte conteúdo do manual da Mouayed Assessoria, qual seria uma dica estratégica prática para um assessor aplicar ao interagir com um cliente ou otimizar seus processos? Concentre-se em uma dica acionável. Conteúdo: "${content}"`;
+        async function sendChatMessage() {
+            const userQuestion = chatInput.value.trim();
+            if (!userQuestion) return;
 
-            let chatHistory = [];
-            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-            const payload = { contents: chatHistory };
-            const apiKey = ""; // API key is provided by Canvas runtime
+            addMessageToChat('user', userQuestion);
+            chatInput.value = ''; // Limpa o input
+
+            chatSendSpinner.classList.add('active');
+            chatSendButton.disabled = true;
+
+            // Recolhe todo o conteúdo relevante do manual para servir como contexto
+            // Isto garante que o modelo tem acesso a todas as informações para responder às perguntas.
+            const allManualContentElements = document.querySelectorAll('.page:not(.cover-page) p, .page:not(.cover-page) li, .page:not(.cover-page) h2, .page:not(.cover-page) h3, .page:not(.cover-page) h4');
+            let manualContext = "";
+            allManualContentElements.forEach(element => {
+                manualContext += element.innerText + "\n\n";
+            });
+
+            // Constrói o prompt para o modelo Gemini, incluindo o contexto do manual e a pergunta do utilizador.
+            const contextPrompt = `O seguinte texto é um manual completo sobre assessoria em marketplaces.
+            MANUAL:
+            ${manualContext}
+
+            Com base APENAS nas informações fornecidas no MANUAL, responda à seguinte PERGUNTA DO UTILIZADOR. Se a resposta não estiver explicitamente no manual, diga que a informação não está disponível no manual.
+
+            PERGUNTA DO UTILIZADOR:
+            ${userQuestion}`;
 
             try {
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
                 const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify({
+                        contents: [{ role: "user", parts: [{ text: contextPrompt }] }]
+                    })
                 });
 
                 const result = await response.json();
 
+                let geminiResponseText;
                 if (result.candidates && result.candidates.length > 0 &&
                     result.candidates[0].content && result.candidates[0].content.parts &&
                     result.candidates[0].content.parts.length > 0) {
-                    const text = result.candidates[0].content.parts[0].text;
-                    outputDiv.innerText = text;
+                    geminiResponseText = result.candidates[0].content.parts[0].text;
                 } else {
-                    outputDiv.innerText = 'Não foi possível gerar a dica estratégica. Tente novamente.';
+                    geminiResponseText = 'Desculpe, não consegui encontrar a resposta no manual ou ocorreu um problema.';
                     console.error('Resposta inesperada da API:', result);
                 }
+                addMessageToChat('gemini', geminiResponseText);
+                chatConversationHistory.push({ role: "gemini", parts: [{ text: geminiResponseText }] });
+
             } catch (error) {
-                outputDiv.innerText = 'Ocorreu um erro ao conectar-se com a API. Verifique sua conexão ou tente novamente.';
+                addMessageToChat('gemini', 'Ocorreu um erro ao comunicar com o assistente. Por favor, tente novamente.');
                 console.error('Erro na chamada da API:', error);
             } finally {
-                spinner.classList.remove('active'); // Desativa o spinner de carregamento
-                button.disabled = false; // Reabilita o botão
+                chatSendSpinner.classList.remove('active');
+                chatSendButton.disabled = false;
             }
         }
 
-        /**
-         * Generates a training script from the Gemini API based on the provided section content.
-         * @param {string} contentId The ID of the HTML element containing the section content.
-         * @param {string} outputDivId The ID of the HTML element to display the output.
-         * @param {string} buttonId The ID of the button that triggered the request.
-         */
-        async function generateTrainingScript(contentId, outputDivId, buttonId) {
-            const contentElement = document.getElementById(contentId);
-            const outputDiv = document.getElementById(outputDivId);
-            const button = document.getElementById(buttonId);
-            const spinner = document.getElementById(buttonId.replace('-button', '-spinner'));
-
-            if (!contentElement || !outputDiv || !button || !spinner) {
-                console.error("Um ou mais elementos não foram encontrados.");
-                return;
+        // Permite enviar a mensagem com a tecla Enter
+        chatInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                sendChatMessage();
             }
-
-            outputDiv.innerText = ''; // Limpa a saída anterior
-            spinner.classList.add('active'); // Ativa o spinner de carregamento
-            button.disabled = true; // Desabilita o botão
-
-            const content = contentElement.innerText;
-            const prompt = `Crie um roteiro de treinamento conciso, em formato de lista de tópicos e com foco em passos práticos, para explicar o seguinte conceito do manual da Mouayed Assessoria a um novo assessor. Não inclua introduções ou conclusões, apenas os tópicos práticos. Conceito: "${content}"`;
-
-            let chatHistory = [];
-            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-            const payload = { contents: chatHistory };
-            const apiKey = ""; // API key is provided by Canvas runtime
-
-            try {
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const text = result.candidates[0].content.parts[0].text;
-                    outputDiv.innerText = text;
-                } else {
-                    outputDiv.innerText = 'Não foi possível gerar o roteiro de treinamento. Tente novamente.';
-                    console.error('Resposta inesperada da API:', result);
-                }
-            } catch (error) {
-                outputDiv.innerText = 'Ocorreu um erro ao conectar-se com a API. Verifique sua conexão ou tente novamente.';
-                console.error('Erro na chamada da API:', error);
-            } finally {
-                spinner.classList.remove('active'); // Desativa o spinner de carregamento
-                button.disabled = false; // Reabilita o botão
-            }
-        }
+        });
     </script>
 </body>
 </html>
