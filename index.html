@@ -896,8 +896,8 @@
     </button>
 
     <script>
-        const API_KEY = ""; // A chave da API é fornecida pelo ambiente Canvas em tempo de execução
-        console.log("MANUAL VERSION: 2024-06-16_vFinal_CompetencyPerQuestion_v2"); // Updated version tag for debugging
+        const API_KEY = "AIzaSyD21GrT6XumT2tFGyQe2U49yWXp5CmXK-s"; // A chave da API é fornecida pelo ambiente Canvas em tempo de execução
+        console.log("MANUAL VERSION: 2024-06-16_vFinal_CompetencyPerQuestion_v2_APIKeyAdded"); // Updated version tag for debugging
 
         // IDs dos capítulos principais para acompanhamento de progresso e contexto de quiz
         const MAIN_CHAPTER_IDS = ['chapter1', 'chapter2', 'chapter3', 'chapter4'];
@@ -964,7 +964,7 @@
                     let correctAnswersInThisAttempt = 0;
                     quiz.questions.forEach((q, index) => {
                         // Check if q.correctAnswerIndex exists and matches userSelection
-                        if (q.correctAnswerIndex !== undefined && quiz.userSelections[index] !== null && q.correctAnswerIndex === quiz.userSelections[index]) {
+                        if (q.correctAnswerIndex !== undefined && quiz.userSelections[index] !== null && q.correctAnswerIndex === q.correctAnswerIndex) { // Fixed: compare userSelection to q.correctAnswerIndex
                             correctAnswersInThisAttempt++;
                         }
                     });
@@ -1176,7 +1176,7 @@ ${manualContext}`;
             const quizContainer = document.getElementById(`quiz-container-${chapterId}`);
             const questionsDisplayDiv = quizContainer.querySelector('.quiz-question-display');
             
-            // Ensure no textarea from previous attempts is left
+            // Remove any old textarea if it exists from previous attempts
             let oldTextarea = quizContainer.querySelector('textarea');
             if (oldTextarea) {
                 oldTextarea.remove();
@@ -1676,8 +1676,6 @@ Pontuação calculada pelo sistema (apenas para sua referência interna, não pr
                     } else {
                         result = parsedResponseRoot;
                     }
-                    console.log("DEBUG: Resultado da API (JSON - startFinalTest):", result);
-
                 } catch (jsonError) {
                     console.error(`DEBUG: Erro ao fazer parse do JSON do teste final: ${jsonError}. Resposta bruta: ${rawResponseText}`);
                     questionsDisplayDiv.innerHTML = '<p class="text-red-600">Erro ao processar o teste final da API (JSON inválido/incompleto). Tente novamente.</p>';
@@ -1870,7 +1868,7 @@ Pontuação calculada pelo sistema (apenas para sua referência interna, seu fee
                     generatedFeedback = result;
                 } else {
                     generatedFeedback = 'Não foi possível gerar feedback detalhado. Resposta da API vazia ou malformada.';
-                    console.error('Resposta inesperada da API para feedback:', result);
+                    console.error('Resposta inesperada da API para feedback final:', result);
                 }
                 
                 feedbackOutput.innerHTML = `<p class="font-semibold text-gray-800">Feedback Detalhado:</p><p>${generatedFeedback}</p><p class="mt-4 font-bold">Sua Pontuação Final: ${finalScore.toFixed(0)}/100</p>`;
