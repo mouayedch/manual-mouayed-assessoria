@@ -903,7 +903,7 @@
         const MAIN_CHAPTER_IDS = ['chapter1', 'chapter2', 'chapter3', 'chapter4'];
 
         // --- Lógica de Progresso do Manual e Barras de Progresso ---
-        window.showToast = function(message) { // Made global
+        function showToast(message) { // Made global
             const toast = document.getElementById('progressToast');
             toast.innerText = message;
             toast.classList.add('show');
@@ -912,7 +912,7 @@
             }, 3000); // Esconde o toast após 3 segundos
         }
 
-        window.saveProgress = function(chapterId, chapterName) { // Made global
+        function saveProgress(chapterId, chapterName) { // Made global
             const checkbox = document.getElementById(`checkbox-${chapterId}`);
             if (checkbox) {
                 localStorage.setItem(`manual-progress-${chapterId}`, checkbox.checked);
@@ -925,7 +925,7 @@
             }
         }
 
-        window.loadProgress = function() { // Made global
+        function loadProgress() { // Made global
             MAIN_CHAPTER_IDS.forEach(id => {
                 const checkbox = document.getElementById(`checkbox-${id}`);
                 if (checkbox) {
@@ -937,7 +937,7 @@
             });
         }
 
-        window.updateReadingProgressBar = function() { // Made global
+        function updateReadingProgressBar() { // Made global
             let completedChapters = 0;
             MAIN_CHAPTER_IDS.forEach(id => {
                 const checkbox = document.getElementById(`checkbox-${id}`);
@@ -953,7 +953,7 @@
             }
         }
 
-        window.updateCompetencyProgressBar = function() { // Made global
+        function updateCompetencyProgressBar() { // Made global
             const storedResults = JSON.parse(localStorage.getItem('manual-quiz-results') || '[]');
             let totalCorrectAnswersOverall = 0;
             const TOTAL_QUESTIONS_FOR_100_PERCENT = 25; // 4% per correct answer
@@ -1988,7 +1988,7 @@ Pontuação calculada pelo sistema (apenas para sua referência interna, seu fee
             }
             if (nextFinalQuizBtn) {
                  if (nextFinalQuizBtn._eventListener_final_next) {
-                    nextFinalQuizBtn.removeEventListener('click', nextFinalQuizBtn._eventListener_final_next);
+                    nextFinalQuizBtn.removeEventListener('click', nextFinalQuizBtn._eventListener_next);
                  }
                 const handler = function() { window.showNextFinalQuizQuestion(this); }; // Call global version
                 nextFinalQuizBtn.addEventListener('click', handler);
