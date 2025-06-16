@@ -11,7 +11,7 @@
             font-family: 'Inter', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f7f6;
+            background-color: #e2e8f0; /* Softer, slightly bluish-grey background */
             color: #333;
         }
         .page {
@@ -25,6 +25,10 @@
             box-sizing: border-box;
             background-color: #fff;
             border-bottom: 1px solid #eee;
+            border-radius: 0.75rem; /* Rounded corners */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Subtle shadow for "relevo" */
+            margin-bottom: 2rem; /* Space between pages */
+            overflow: hidden; /* Ensure rounded corners clip content */
         }
         .cover-page {
             background-image: url('20eea770-a653-40f5-8e05-8c5b0d5e07c1.jpg'); /* Define a imagem de fundo */
@@ -38,8 +42,8 @@
             align-items: center;
             text-align: center;
             position: relative;
-            /* Adiciona uma sobreposição para melhorar a legibilidade do texto */
-            background-blend-mode: multiply; /* Para escurecer a imagem */
+            background-blend-mode: overlay; /* Stronger blend for text readability */
+            overflow: hidden; /* For inner gradients/effects */
         }
         .cover-page::before {
             content: '';
@@ -51,8 +55,19 @@
             background-color: rgba(0, 0, 0, 0.4); /* Escurece a imagem para o texto sobressair */
             z-index: 1; /* Garante que a sobreposição esteja abaixo do conteúdo de texto */
         }
+        .cover-page::after { /* Adding a subtle technological gradient overlay */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top left, rgba(79, 70, 229, 0.2) 0%, transparent 70%);
+            z-index: 1;
+            pointer-events: none; /* Allows clicks through */
+        }
         .cover-content {
-            position: relative; /* Para garantir que o conteúdo fique acima da sobreposição */
+            position: relative; /* Para garantir que o conteúdo fique acima da nova sobreposição */
             z-index: 2; /* Acima da sobreposição */
             display: flex;
             flex-direction: column;
@@ -60,7 +75,7 @@
             justify-content: center;
             height: 100%;
             width: 100%;
-            padding: 2rem; /* Adiciona algum padding */
+            padding: 4rem 2rem; /* Mais padding para espaço visual */
         }
         .cover-footer {
             position: absolute;
@@ -74,6 +89,7 @@
             font-size: 0.875rem;
             color: #fff;
             z-index: 2; /* Acima da sobreposição */
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5); /* Make text pop a bit more */
         }
         .content-page {
             padding: 2rem;
@@ -82,29 +98,24 @@
             line-height: 1.6;
         }
         h1, h2, h3, h4 {
-            color: #1a2a47;
+            color: #1f2937; /* Slightly darker for better contrast */
             font-weight: 600;
         }
         .toc-link {
             display: block;
             margin-bottom: 0.5rem;
             padding: 0.5rem 1rem;
-            background-color: #e0e7ff;
+            background-color: #ebf0ff; /* Retain soft blue */
             border-radius: 0.5rem;
             color: #333;
             text-decoration: none;
-            transition: background-color 0.3s ease;
+            font-weight: 500; /* Slightly bolder */
+            transition: all 0.2s ease-in-out;
         }
         .toc-link:hover {
             background-color: #c7d2fe;
-        }
-        .toc-link.sub-section {
-            padding-left: 2.5rem;
-            background-color: #ebf0ff;
-        }
-        .toc-link.sub-sub-section {
-            padding-left: 3.5rem;
-            background-color: #f3f6ff;
+            transform: translateY(-2px); /* Slight lift on hover */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
         .header-section {
             width: 100%;
@@ -267,7 +278,7 @@
             position: fixed;
             bottom: 2rem;
             right: 2rem;
-            background-color: #4f46e5;
+            background-color: #10b981; /* Green for FAB to stand out */
             color: white;
             width: 60px;
             height: 60px;
@@ -277,17 +288,217 @@
             align-items: center;
             font-size: 1.8rem;
             cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 6px 10px -2px rgba(0, 0, 0, 0.15), 0 3px 6px -1px rgba(0, 0, 0, 0.08);
             z-index: 999;
             transition: background-color 0.3s ease, transform 0.2s ease;
         }
         .chatbot-fab:hover {
+            background-color: #059669;
+            transform: scale(1.1);
+        }
+
+        /* Progress indicator styles */
+        .chapter-heading-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem; /* Adjust as needed */
+        }
+        .chapter-heading-container input[type="checkbox"] {
+            width: 1.5rem;
+            height: 1.5rem;
+            accent-color: #4f46e5; /* Primary color for checkbox */
+            cursor: pointer;
+        }
+
+        /* Toast notification styles */
+        .toast-notification {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background-color: #1a2a47;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1100;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-20px);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0.3s ease-out;
+        }
+        .toast-notification.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* Test Section Styles */
+        .test-section-container { /* New container for the single, final test */
+            margin-top: 2rem;
+            padding: 2rem;
+            background-color: #eaf5ff; /* Light blue background for the test */
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .quiz-question-display {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background-color: #ffffff;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            min-height: 80px; /* Ensure space for content */
+        }
+        .quiz-question-display .question-text {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .quiz-options label {
+            display: block;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+        }
+        .quiz-options input[type="radio"] {
+            margin-right: 0.5rem;
+            accent-color: #4f46e5;
+        }
+
+        .test-button-group {
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        .test-button {
+            background-color: #4f46e5;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .test-button:hover {
             background-color: #4338ca;
-            transform: scale(1.05);
+        }
+        .test-instructions {
+            background-color: #e0f2f7;
+            border-left: 4px solid #29b6f6;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+            color: #00796b;
+        }
+        .test-feedback-output {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #d1e7dd; /* Light green for feedback */
+            border-left: 4px solid #34d399; /* Green border */
+            border-radius: 0.5rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            min-height: 3rem;
+            display: none; /* Hidden until feedback is available */
+        }
+
+        /* Progress Bars Container */
+        .progress-bars-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto 2rem auto; /* Center and add space below */
+            padding: 1rem;
+            background-color: #f0f4f8; /* Light background for the container */
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            position: sticky; /* Makes it stick when scrolling */
+            top: 0; /* Sticks to the top */
+            z-index: 500; /* Ensures it stays above content when scrolling */
+            border-bottom: 1px solid #e2e8f0; /* Subtle border at the bottom */
+        }
+
+        .progress-bar-wrapper {
+            margin-bottom: 1rem;
+        }
+
+        .progress-bar-label {
+            font-weight: 600;
+            color: #1a2a47;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .progress-bar-inner {
+            background-color: #e2e8f0; /* Light grey track */
+            border-radius: 9999px; /* Fully rounded */
+            height: 12px;
+            overflow: hidden; /* Hide overflowing fill */
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background-color: #4f46e5; /* Primary color fill */
+            border-radius: 9999px;
+            width: 0%; /* Initial width */
+            transition: width 0.5s ease-in-out; /* Smooth transition */
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 0.5rem;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Confirmation Modal for Reset */
+        #confirmationModal .chat-modal-content {
+            height: auto;
+            max-height: 90vh; /* Adjust for smaller screens */
+        }
+        #confirmationModal .chat-messages {
+            text-align: center;
+            font-size: 1.1rem;
+            padding: 2rem;
+            color: #333;
+        }
+        #confirmationModal .chat-input-area {
+            justify-content: space-around;
+            padding: 1.5rem;
+        }
+        #confirmationModal .gemini-button {
+            margin-top: 0; /* Override default button margin */
         }
     </style>
 </head>
 <body>
+
+    <!-- Toast Notification -->
+    <div id="progressToast" class="toast-notification"></div>
+
+    <!-- Custom Confirmation Modal (for reset) -->
+    <div id="confirmationModal" class="chat-modal-overlay">
+        <div class="chat-modal-content">
+            <div class="chat-modal-header">
+                <h3 class="text-xl font-semibold">Confirmar Reinício</h3>
+                <button class="chat-modal-close" onclick="hideConfirmationModal()">×</button>
+            </div>
+            <div class="chat-messages">
+                <div class="message-bubble gemini" style="width: 100%;">
+                    Tem a certeza que quer reiniciar todo o seu progresso (leitura e competência)? Esta ação não pode ser desfeita.
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <button class="gemini-button" onclick="confirmReset(true)">Sim, Reiniciar</button>
+                <button class="gemini-button" style="background-color: #ef4444;" onclick="confirmReset(false)">Não, Cancelar</button>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Página de Capa -->
     <div class="page cover-page">
@@ -296,7 +507,7 @@
             <h2 class="text-3xl md:text-4xl lg:text-5xl font-semibold">MANUAL COMPLETO DE SERVIÇOS E TREINAMENTOS</h2>
         </div>
         <div class="cover-footer">
-            <span>CHAHINEMOUAYED@GMAIL.COM</span>
+            <span>CHAHINEMOUAYED@GMAIL.com</span>
             <span>(11) 95892-0382</span>
             <span>@ MOUAYED_ASSESSORIA</span>
         </div>
@@ -318,7 +529,7 @@
         <a href="#implementacao-bling-erp" class="toc-link sub-sub-section">2.3.1. Implementação do Bling ERP (Parceria e Benefícios)</a>
         <a href="#configuracao-contas" class="toc-link sub-sub-section">2.3.2. Configuração Inicial e Conexão de Contas</a>
         <a href="#produtos-estoque-precificacao" class="toc-link sub-sub-section">2.3.3. Configuração de Produtos, Estoque e Precificação</a>
-        <a href="#nfe-integracao-financeira" class="toc-link sub-sub-section">2.3.4. Configuração de Emissão de Notas Fiscais e Integração Financeira</a>
+        <a href="#nfe-integracao-financeira" class="toc-link sub-sub-section">2.3.4. Configuração de Emissão de Notas Fisais e Integração Financeira</a>
         <a href="#acompanhamento-estrategico" class="toc-link sub-section">2.4. Acompanhamento Contínuo e Atualização Estratégica</a>
         <a href="#treinamento-produtos" class="toc-link">Capítulo 3: Treinamento e Implantação de Produtos</a>
         <a href="#treinamento-presencial" class="toc-link sub-section">3.1. Processo de Treinamento Presencial</a>
@@ -327,11 +538,34 @@
         <a href="#recrutamento-formacao" class="toc-link sub-section">4.1. Processo de Recrutamento e Formação da Equipe</a>
         <a href="#remuneracao-progressiva" class="toc-link sub-section">4.2. Modelo de Remuneração Progressiva (Baseado na Fidelização)</a>
         <a href="#suporte-continuo" class="toc-link sub-section">4.3. Suporte Contínuo (Papel do Mentor e Suporte 24 Horas)</a>
+        <a href="#avaliacao-final-manual" class="toc-link">Avaliação Final do Manual</a>
 
         <div class="footer-section">
             <span>Email: chahinemouayed@gmail.com | Telefone: (11) 95892-0382 | Instagram: @mouayed_assessoria</span>
         </div>
     </div>
+
+    <!-- Progress Bars Section -->
+    <div class="progress-bars-container">
+        <div class="progress-bar-wrapper">
+            <label class="progress-bar-label" for="readingProgressBar">Progresso de Leitura:</label>
+            <div class="progress-bar-inner">
+                <div id="readingProgressBarFill" class="progress-bar-fill" style="width: 0%;">0%</div>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper">
+            <label class="progress-bar-label" for="competencyProgressBar">Progresso de Competência (Média Quiz):</label>
+            <div class="progress-bar-inner">
+                <div id="competencyProgressBarFill" class="progress-bar-fill" style="width: 0%;">0%</div>
+            </div>
+        </div>
+        <div class="flex justify-center mt-4">
+            <button class="gemini-button" style="background-color: #dc2626;" onclick="showConfirmationModal()">
+                Reiniciar Tudo
+            </button>
+        </div>
+    </div>
+
 
     <!-- Conteúdo do Manual a partir da Página 3 -->
     <div class="page content-page chapter-start" id="visao-geral">
@@ -339,7 +573,10 @@
             <span>Mouayed Assessoria - Manual Completo</span>
             <span>--- PÁGINA 3 ---</span>
         </div>
-        <h2 class="text-2xl font-semibold mb-4">Capítulo 1: Visão Geral da Assessoria</h2>
+        <div class="chapter-heading-container">
+            <input type="checkbox" id="checkbox-chapter1" onchange="saveProgress('chapter1', 'Capítulo 1')">
+            <h2 class="text-2xl font-semibold">Capítulo 1: Visão Geral da Assessoria</h2>
+        </div>
         <p class="mb-4" id="chapter1-content">Nossa assessoria oferece um serviço completo, "do início ao fim", para empresas que trabalham com marketplaces ou que estão sendo introduzidas a esse ambiente. Nosso modelo se baseia em uma fidelização semanal com o cliente, garantindo um acompanhamento contínuo e uma parceria de longo prazo. Atuamos como o "conforto" para o cliente, transformando dúvidas em assertividade e mostrando o caminho certo para começar e crescer no marketplace. Não se trata apenas de vender, mas de construir uma operação online sólida e lucrativa.</p>
 
         <div class="footer-section">
@@ -352,16 +589,24 @@
             <span>Mouayed Assessoria - Manual Completo</span>
             <span>--- PÁGINA 4 ---</span>
         </div>
-        <h2 class="text-2xl font-semibold mb-4">Capítulo 2: Otimização de Processos e Criação de Manuais de Treinamento</h2>
-        <p class="mb-4" id="chapter2-content">Esta seção descreve o fluxo de trabalho padronizado da nossa assessoria, garantindo eficiência, qualidade e replicabilidade do serviço.</p>
+        <div class="chapter-heading-container">
+            <input type="checkbox" id="checkbox-chapter2" onchange="saveProgress('chapter2', 'Capítulo 2')">
+            <h2 class="text-2xl font-semibold">Capítulo 2: Otimização de Processos e Criação de Manuais de Treinamento</h2>
+        </div>
+        <p class="mb-4" id="chapter2-content-intro">Esta seção descreve o fluxo de trabalho padronizado da nossa assessoria, garantindo eficiência, qualidade e replicabilidade do serviço.</p>
+
+        <div class="my-6 p-4 border rounded-lg bg-blue-50">
+            <h3 class="text-lg font-semibold text-blue-800 mb-2">Ideia Futura: Diagrama de Fluxo Interativo aqui!</h3>
+            <p class="text-sm text-blue-700">Poderíamos ter um fluxograma visual e interativo do processo de otimização, onde clicar em cada etapa expandiria os detalhes. Isso usaria bibliotecas como D3.js ou custom SVG.</p>
+        </div>
 
         <h3 class="text-xl font-semibold mb-3" id="primeiro-contato">2.1. Primeiro Contato e Alinhamento Inicial</h3>
-        <p class="mb-2"><strong>Objetivo:</strong> Estabelecer um relacionamento de confiança, entender as necessidades do cliente e apresentar a proposta de valor da assessoria.</p>
+        <p class="mb-2" id="section2-1-content"><strong>Objetivo:</strong> Estabelecer um relacionamento de confiança, entender as necessidades do cliente e apresentar a proposta de valor da assessoria.</p>
         <p class="mb-2"><strong>Procedimento:</strong> Abordagem proativa e consultiva, focando em como a assessoria pode resolver as dores e otimizar os resultados do cliente. Explicamos que o mercado de vendas em marketplace é um campo vasto, aberto para qualquer segmento, e que a chave é focar no produto com o qual o cliente tem conforto e paixão em trabalhar. Nosso papel é ser o guia, transformando dúvidas em assertividade e acelerando resultados.</p>
         <p class="mb-4"><strong>Benefício:</strong> Oferecer "segurança e assertividade" ao cliente desde o primeiro momento, mostrando que ele não precisará se preocupar com a complexidade inicial e terá um guia ao seu lado.</p>
 
         <h3 class="text-xl font-semibold mb-3" id="verificacao-documentacao">2.2. Verificação da Integridade da Empresa e Documentação</h3>
-        <p class="mb-2"><strong>Objetivo:</strong> Assegurar que o cliente possui a documentação necessária para operar legalmente nos marketplaces e emitir notas fiscais.</p>
+        <p class="mb-2" id="section2-2-content"><strong>Objetivo:</strong> Assegurar que o cliente possui a documentação necessária para operar legalmente nos marketplaces e emitir notas fiscais.</p>
         <p class="mb-2"><strong>Procedimento:</strong> Análise de CNPJ: Realizamos a verificação da situação cadastral do CNPJ do cliente, confirmando se está ativo e se as atividades principais (CNAEs) estão alinhadas com o tipo de produto que o cliente pretende vender.</p>
         <p class="mb-2"><strong>Certificado Digital A1:</strong> Assumimos a responsabilidade pela análise e, se necessário, emissão do Certificado Digital.</p>
         <ul class="list-disc ml-6 mb-4">
@@ -385,7 +630,7 @@
         <p class="mb-4" id="section2-3-content">Esta etapa é a espinha dorsal tecnológica da operação do seu cliente, centralizando a gestão de e-commerce e as operações internas através do Bling ERP. Nossa assessoria garante não apenas a implementação, mas também a otimização de custos e a configuração completa, inclusive a criação das contas nos marketplaces.</p>
 
         <h4 class="text-lg font-semibold mb-2" id="implementacao-bling-erp">2.3.1. Implementação do Bling ERP (Parceria e Benefícios)</h4>
-        <p class="mb-2"><strong>Objetivo:</strong> Prover o cliente com uma plataforma robusta e integrada para gerenciar seu negócio, com um benefício financeiro exclusivo.</p>
+        <p class="mb-2" id="section2-3-1-content"><strong>Objetivo:</strong> Prover o cliente com uma plataforma robusta e integrada para gerenciar seu negócio, com um benefício financeiro exclusivo.</p>
         <p class="mb-4"><strong>Como fazemos:</strong></p>
         <ul class="list-disc ml-6 mb-4">
             <li>Recomendamos e implementamos o Bling ERP como nossa solução padrão devido à sua versatilidade e eficácia para operações em marketplace.</li>
@@ -394,7 +639,7 @@
         </ul>
 
         <h4 class="text-lg font-semibold mb-2" id="configuracao-contas">2.3.2. Configuração Inicial e Conexão de Contas</h4>
-        <p class="mb-2"><strong>Objetivo:</strong> Estabelecer a base do sistema, criar e conectar as contas do cliente aos canais de venda online.</p>
+        <p class="mb-2" id="section2-3-2-content"><strong>Objetivo:</strong> Estabelecer a base do sistema, criar e conectar as contas do cliente aos canais de venda online.</p>
         <p class="mb-4"><strong>Ações Práticas:</strong></p>
         <ul class="list-disc ml-6 mb-4">
             <li><strong>Criação e Configuração da Conta Bling:</strong> Criamos a conta do cliente no Bling e realizamos as configurações iniciais (dados da empresa, informações cadastrais).</li>
@@ -414,7 +659,7 @@
             <span>--- PÁGINA 6 ---</span>
         </div>
         <h4 class="text-lg font-semibold mb-2">2.3.3. Configuração de Produtos, Estoque e Precificação</h4>
-        <p class="mb-2"><strong>Objetivo:</strong> Assegurar que os produtos estejam corretamente cadastrados no Bling e sejam sincronizados de forma eficiente com os marketplaces.</p>
+        <p class="mb-2" id="section2-3-3-content"><strong>Objetivo:</strong> Assegurar que os produtos estejam corretamente cadastrados no Bling e sejam sincronizados de forma eficiente com os marketplaces.</p>
         <p class="mb-4"><strong>Ações Práticas:</strong></p>
         <ul class="list-disc ml-6 mb-4">
             <li><strong>Importação de Produtos:</strong> Auxiliamos na importação dos produtos do cliente para o Bling (via planilha ou de loja virtual existente).</li>
@@ -423,16 +668,16 @@
         </ul>
 
         <h4 class="text-lg font-semibold mb-2" id="nfe-integracao-financeira">2.3.4. Configuração de Emissão de Notas Fiscais e Integração Financeira</h4>
-        <p class="mb-2"><strong>Objetivo:</strong> Automatizar processos fiscais e financeiros para maior eficiência.</p>
+        <p class="mb-2" id="section2-3-4-content"><strong>Objetivo:</strong> Automatizar processos fiscais e financeiros para maior eficiência.</p>
         <p class="mb-4"><strong>Ações Práticas:</strong></p>
         <ul class="list-disc ml-6 mb-4">
             <li><strong>Configuração de NF-e:</strong> O certificado digital A1 é integrado ao Bling para automatizar a emissão de Notas Fiscais Eletrônicas (NF-e) de forma descomplicada.</li>
-            <li><strong>Gestão Financeira:</strong> Configuramos os módulos financeiros básicos do Bling para que o cliente possa acompanhar seu fluxo de caixa, contas a pagar e a receber.</li>
+            <li><strong>Gestão Financeira:</strong> Configuramos os módulos financeiros financeiros básicos do Bling para que o cliente possa acompanhar seu fluxo de caixa, contas a pagar e a receber.</li>
             <li><strong>Relatórios Essenciais:</strong> Orientamos o cliente sobre como acessar e interpretar os relatórios chave no Bling que monitoram o desempenho de vendas e financeiro.</li>
         </ul>
 
         <h3 class="text-xl font-semibold mb-3" id="acompanhamento-estrategico">2.4. Acompanhamento Contínuo e Atualização Estratégica</h3>
-        <p class="mb-2"><strong>Objetivo:</strong> Manter o cliente sempre à frente no mercado, otimizando performance e aproveitando novas oportunidades.</p>
+        <p class="mb-2" id="section2-4-content"><strong>Objetivo:</strong> Manter o cliente sempre à frente no mercado, otimizando performance e aproveitando novas oportunidades.</p>
         <p class="mb-4"><strong>Procedimento:</strong></p>
         <ul class="list-disc ml-6 mb-4">
             <li><strong>Acompanhamento de Campanhas de ADS:</strong> Monitoramento contínuo e otimização das campanhas de publicidade (ADS) nas diversas plataformas de marketplace, ajustando lances, palavras-chave e segmentação para maximizar o ROI do cliente.</li>
@@ -450,8 +695,11 @@
             <span>Mouayed Assessoria - Manual Completo</span>
             <span>--- PÁGINA 7 ---</span>
         </div>
-        <h2 class="text-2xl font-semibold mb-4">Capítulo 3: Treinamento e Implantação de Produtos</h2>
-        <p class="mb-4" id="chapter3-content">Esta etapa é onde o cliente começa a ver seus produtos ganhando vida nos marketplaces. Nosso treinamento visa capacitar o cliente e sua equipe a otimizar o cadastro de produtos e a gerenciar suas operações de forma autônoma.</p>
+        <div class="chapter-heading-container">
+            <input type="checkbox" id="checkbox-chapter3" onchange="saveProgress('chapter3', 'Capítulo 3')">
+            <h2 class="text-2xl font-semibold">Capítulo 3: Treinamento e Implantação de Produtos</h2>
+        </div>
+        <p class="mb-4" id="chapter3-content-intro">Esta etapa é onde o cliente começa a ver seus produtos ganhando vida nos marketplaces. Nosso treinamento visa capacitar o cliente e sua equipe a otimizar o cadastro de produtos e a gerenciar suas operações de forma autônoma.</p>
 
         <h3 class="text-xl font-semibold mb-3" id="treinamento-presencial">3.1. Processo de Treinamento Presencial</h3>
         <p class="mb-2" id="section3-1-content"><strong>Formato:</strong> O treinamento é realizado presencialmente, com duração de um ou mais dias, dependendo do volume de produtos, complexidade do negócio e tamanho da equipe do cliente. O foco é na prática e na personalização.</p>
@@ -469,7 +717,7 @@
                 <p class="ml-4"><strong>Objetivo:</strong> Avaliar a capacidade da equipe de executar o processo de forma independente.</p>
                 <p class="ml-4"><strong>Ação:</strong> A equipe do cliente executa o procedimento por conta própria, com nossa observação para identificar inseguranças ou erros recorrentes.</p>
             </li>
-            <li><strong>Etapa 4: Feedback Personalizado e Reforço de Dificuldades ("Correção e Foco em Melhoria"):</strong>
+            <li><strong>Etapa 4: Feedback Personalizado e Reinforço de Dificuldades ("Correção e Foco em Melhoria"):</strong>
                 <p class="ml-4"><strong>Objetivo:</strong> Corrigir erros, esclarecer dúvidas e focar no aprimoramento das áreas de maior dificuldade individual.</p>
                 <p class="ml-4"><strong>Ação:</strong> Fornecemos feedback construtivo, corrigindo erros e focando em melhorar os pontos específicos de cada pessoa até a compreensão e execução estarem solidificadas.</p>
             </li>
@@ -494,7 +742,7 @@
             <li><strong>Controle de Estoque Eficaz (via Bling ERP):</strong> Configuração de estoque no Bling, sincronização automática com marketplaces, gestão de múltiplos depósitos e inventário.</li>
             <li><strong>Precificação Estratégica e Análise de Margens:</strong> Cálculo detalhado de precificação (custos, taxas, frete, impostos), definição de margem de lucro e estratégias de precificação.</li>
             <li><strong>Estratégias de Marketing Envolvendo o Produto:</strong> Publicidade paga nos marketplaces (Mercado Livre Ads, Shopee Ads, etc.), campanhas de e-mail marketing, uso de redes sociais para direcionar tráfego, criação de kits e combos.</li>
-            <li><strong>Gestão de Pedidos (Bling ERP): Nota Fiscal Automatizada e Impressão de Etiquetas:</strong> Configuração de NF-e automatizada via Bling, impressão de etiquetas de envio e acompanhamento de status de pedidos.</li>
+            <li><strong>Gestão de Pedidos (Bling ERP): Nota Fiscal Automatizada e Impressão de Etiquetas:</strong> Configuração de NF-e automatizada via Bling, impressão de etiquetas de etiquetas de envio e acompanhamento de status de pedidos.</li>
             <li><strong>Explicação Rápida de Embalagens e Despacho:</strong> Tipos de embalagem adequados, proteção interna, orientações sobre pesagem e cubagem, agendamento de coleta ou postagem.</li>
             <li><strong>Treinamento de SAC (Suporte ao Cliente Pré-venda e Pós-venda):</strong> Melhores práticas para responder perguntas, gerenciamento de reclamações, pós-venda ativo e impacto da reputação.</li>
             <li><strong>Pesquisa de Concorrentes:</strong> Ferramentas para análise de concorrência, identificação de produtos mais vendidos, análise de preços e estratégias, identificação de lacunas.</li>
@@ -512,11 +760,14 @@
             <span>Mouayed Assessoria - Manual Completo</span>
             <span>--- PÁGINA 9 ---</span>
         </div>
-        <h2 class="text-2xl font-semibold mb-4">Capítulo 4: Desenvolvimento de Liderança, Delegação e Gestão de Equipe</h2>
+        <div class="chapter-heading-container">
+            <input type="checkbox" id="checkbox-chapter4" onchange="saveProgress('chapter4', 'Capítulo 4')">
+            <h2 class="text-2xl font-semibold">Capítulo 4: Desenvolvimento de Liderança, Delegação e Gestão de Equipe</h2>
+        </div>
         <p class="mb-4" id="chapter4-content">Esta seção detalha o processo de recrutamento, formação e gestão da equipe, permitindo a escala do negócio através da replicação do conhecimento e da manutenção da qualidade do serviço.</p>
 
         <h3 class="text-xl font-semibold mb-3" id="recrutamento-formacao">4.1. Processo de Recrutamento e Formação da Equipe</h3>
-        <p class="mb-2">Este processo visa identificar, capacitar e integrar novos membros à equipe, garantindo que estejam aptos a replicar a metodologia de assessoria, com a liderança atuando como mentor e suporte estratégico.</p>
+        <p class="mb-2" id="section4-1-content"><strong>Objetivo:</strong> Identificar, capacitar e integrar novos membros à equipe, garantindo que estejam aptos a replicar a metodologia de assessoria, com a liderança atuando como mentor e suporte estratégico.</p>
         <ul class="list-decimal ml-6 mb-4">
             <li><strong>Seleção Inicial: Análise de Capacidade Via Call:</strong>
                 <p class="ml-4"><strong>Objetivo:</strong> Avaliar o potencial do candidato, sua aptidão para aprender, comunicação e alinhamento cultural.</p>
@@ -525,7 +776,7 @@
             <li><strong>Treinamento Intensivo (Teórico e Prático - Período Não Remunerado):</strong>
                 <p class="ml-4"><strong>Objetivo:</strong> Capacitar o candidato com todo o conhecimento e prática necessários para executar o serviço de assessoria de forma independente. Este período funciona como um curso intensivo sem compromisso financeiro inicial.</p>
                 <p class="ml-4"><strong>Fase Teórica (7 a 14 dias):</strong> Condução de treinamento intensivo cobrindo todos os tópicos detalhados na Seção 2.2.</p>
-                <p class="ml-4"><strong>Fase Prática (14 dias de Acompanhamento):</strong> O candidato acompanhará o mentor em suas interações com clientes reais, observando a aplicação do conteúdo teórico e a dinâmica do relacionamento com o cliente.</p>
+                <p class="ml-4"><strong>Fase Prase Prática (14 dias de Acompanhamento):</strong> O candidato acompanhará o mentor em suas interações com clientes reais, observando a aplicação do conteúdo teórico e a dinâmica do relacionamento com o cliente.</p>
             </li>
             <li><strong>Avaliação Pós-Período Educacional e Entrada na Equipe:</strong>
                 <p class="ml-4"><strong>Objetivo:</strong> Analisar a aptidão do candidato após o treinamento e decidir pela contratação.</p>
@@ -543,7 +794,7 @@
             <span>--- PÁGINA 10 ---</span>
         </div>
         <h3 class="text-xl font-semibold mb-3">4.2. Modelo de Remuneração Progressiva (Baseado na Fidelização)</h3>
-        <p class="mb-2"><strong>Objetivo:</strong> Oferecer uma compensação justa e crescente, incentivando a permanência e o desenvolvimento do assessor.</p>
+        <p class="mb-2" id="section4-2-content"><strong>Objetivo:</strong> Oferecer uma compensação justa e crescente, incentivando a permanência e o desenvolvimento do assessor.</p>
         <p class="mb-4"><strong>Estrutura:</strong> O assessor receberá uma porcentagem do valor mensal pago pelo cliente, que aumentará progressivamente:</p>
         <ul class="list-disc ml-6 mb-4">
             <li><strong>Primeiro e Segundo Mês de Assessoria:</strong> 40% do valor da assessoria por cliente.</li>
@@ -553,12 +804,58 @@
         <p class="mb-4">(Exemplo baseado em R$175/assessoria: Meses 1-2: R$ 70,00 por assessoria; Meses 3-6: R$ 78,75 por assessoria; A partir do Mês 7: R$ 87,50 por assessoria.)</p>
 
         <h3 class="text-xl font-semibold mb-3" id="suporte-continuo">4.3. Suporte Contínuo (Papel do Mentor e Suporte 24 Horas)</h3>
-        <p class="mb-2"><strong>Objetivo:</strong> Garantir a qualidade do serviço e o desenvolvimento contínuo da equipe, mantendo a promessa de atualização e excelência para o cliente final.</p>
+        <p class="mb-2" id="section4-3-content"><strong>Objetivo:</strong> Garantir a qualidade do serviço e o desenvolvimento contínuo da equipe, mantendo a promessa de atualização e excelência para o cliente final.</p>
         <p class="mb-4"><strong>Ação:</strong> Mesmo após a contratação, o papel da liderança será de suporte e mentoria contínuos. Isso inclui:</p>
         <ul class="list-disc ml-6 mb-4">
             <li>Oferecer suporte 24 horas como um "backbone" para a equipe em casos de dúvidas complexas ou situações desafiadoras com os clientes.</li>
             <li>Manter a equipe atualizada com as novidades das plataformas e tendências de mercado, garantindo que o conhecimento sobre acompanhamento de ADS e otimização contínua seja repassado e aplicado de forma eficaz.</li>
         </ul>
+
+        <div class="footer-section">
+            <span>Email: chahinemouayed@gmail.com | Telefone: (11) 95892-0382 | Instagram: @mouayed_assessoria</span>
+        </div>
+    </div>
+
+    <!-- Nova seção: Avaliação Final do Manual (com quiz de múltipla escolha) -->
+    <div class="page content-page chapter-start" id="avaliacao-final-manual">
+        <div class="header-section">
+            <span>Mouayed Assessoria - Manual Completo</span>
+            <span>--- PÁGINA 11 ---</span>
+        </div>
+        <h2 class="text-2xl font-semibold mb-4 text-center">Avaliação Final do Manual</h2>
+        <p class="mb-4">Chegou ao fim do manual! Agora, teste o seu conhecimento geral sobre todos os tópicos. Clique em "Iniciar Teste Final" para gerar 5 perguntas de múltipla escolha. Será avaliado em todas as áreas.</p>
+
+        <div class="test-instructions">
+            <p><strong>Instruções:</strong></p>
+            <ol class="list-decimal ml-5">
+                <li>Clique em "Iniciar Teste Final" para gerar as perguntas.</li>
+                <li>Selecione a opção de resposta para cada pergunta.</li>
+                <li>Clique em "Próxima Pergunta" para avançar (ou "Submeter Respostas" na última questão).</li>
+                <li>Receberá feedback detalhado e a sua pontuação final.</li>
+            </ol>
+        </div>
+
+        <div class="test-section-container" id="final-quiz-container">
+            <h3 class="text-xl font-semibold mb-3">Teste Final de Conhecimento</h3>
+            <div class="quiz-question-display" id="final-quiz-question-display">
+                <!-- Final test questions will be dynamically displayed here -->
+            </div>
+            <div class="test-button-group">
+                <button class="test-button" id="start-final-quiz-btn">
+                    Iniciar Teste Final
+                    <div class="loading-spinner"></div>
+                </button>
+                <button class="test-button" id="next-final-quiz-btn" style="display:none;">
+                    Próxima Pergunta
+                    <div class="loading-spinner"></div>
+                </button>
+                <button class="test-button" id="submit-final-quiz-btn" style="display:none;">
+                    Submeter Respostas
+                    <div class="loading-spinner"></div>
+                </button>
+            </div>
+            <div id="final-quiz-feedback" class="test-feedback-output" style="display:none;"></div>
+        </div>
 
         <div class="footer-section">
             <span>Email: chahinemouayed@gmail.com | Telefone: (11) 95892-0382 | Instagram: @mouayed_assessoria</span>
@@ -575,14 +872,19 @@
             <div id="chatMessages" class="chat-messages">
                 <!-- Chat messages will be appended here -->
                 <div class="message-bubble gemini">
-                    Olá! Sou o seu assistente do manual da Mouayed Assessoria. Como posso ajudar hoje? Pergunte-me sobre qualquer tópico no manual!
+                    Olá! Sou o seu assistente do manual da Mouayed Assessoria. Como posso ajudar hoje? Pode perguntar-me sobre qualquer tópico no manual, ou experimentar pedir:
+                    <ul>
+                        <li>"Gerar percurso de treinamento para um novo assessor"</li>
+                        <li>"Simular cenário de cliente insatisfeito com vendas"</li>
+                        <li>"Expanda sobre precificação estratégica"</li>
+                    </ul>
                 </div>
             </div>
             <div class="chat-input-area">
                 <input type="text" id="chatInput" class="chat-input" placeholder="Digite a sua pergunta...">
                 <button id="chatSendButton" class="chat-send-button" onclick="sendChatMessage()">
                     Enviar
-                    <div id="chatSendSpinner" class="loading-spinner"></div>
+                    <div class="loading-spinner"></div>
                 </button>
             </div>
         </div>
@@ -595,63 +897,241 @@
 
     <script>
         const API_KEY = ""; // A chave da API é fornecida pelo ambiente Canvas em tempo de execução
+        console.log("MANUAL VERSION: 2024-06-16_vFinal_CompetencyPerQuestion_v2"); // Updated version tag for debugging
 
-        // --- Lógica do Chatbot ---
-        const chatModalOverlay = document.getElementById('chatModalOverlay');
-        const chatMessagesDiv = document.getElementById('chatMessages');
-        const chatInput = document.getElementById('chatInput');
-        const chatSendButton = document.getElementById('chatSendButton');
-        const chatSendSpinner = document.getElementById('chatSendSpinner');
+        // IDs dos capítulos principais para acompanhamento de progresso e contexto de quiz
+        const MAIN_CHAPTER_IDS = ['chapter1', 'chapter2', 'chapter3', 'chapter4'];
 
-        let chatConversationHistory = [{
-            role: "gemini",
-            parts: [{ text: "Olá! Sou o seu assistente do manual da Mouayed Assessoria. Como posso ajudar hoje? Pergunte-me sobre qualquer tópico no manual!" }]
-        }];
+        // --- Lógica de Progresso do Manual e Barras de Progresso ---
+        window.showToast = function(message) { // Made global
+            const toast = document.getElementById('progressToast');
+            toast.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000); // Esconde o toast após 3 segundos
+        }
 
-        function toggleChatModal() {
-            chatModalOverlay.classList.toggle('active');
-            if (chatModalOverlay.classList.contains('active')) {
-                chatInput.focus(); // Coloca o foco no input quando o modal abre
-                chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight; // Rola para o fim
+        window.saveProgress = function(chapterId, chapterName) { // Made global
+            const checkbox = document.getElementById(`checkbox-${chapterId}`);
+            if (checkbox) {
+                localStorage.setItem(`manual-progress-${chapterId}`, checkbox.checked);
+                if (checkbox.checked) {
+                    window.showToast(`${chapterName} marcado como lido!`);
+                } else {
+                    window.showToast(`${chapterName} desmarcado.`);
+                }
+                window.updateReadingProgressBar(); // Atualiza a barra de leitura
             }
         }
 
-        function addMessageToChat(role, text) {
+        window.loadProgress = function() { // Made global
+            MAIN_CHAPTER_IDS.forEach(id => {
+                const checkbox = document.getElementById(`checkbox-${id}`);
+                if (checkbox) {
+                    const savedState = localStorage.getItem(`manual-progress-${id}`);
+                    if (savedState === 'true') {
+                        checkbox.checked = true;
+                    }
+                }
+            });
+        }
+
+        window.updateReadingProgressBar = function() { // Made global
+            let completedChapters = 0;
+            MAIN_CHAPTER_IDS.forEach(id => {
+                const checkbox = document.getElementById(`checkbox-${id}`);
+                if (checkbox && checkbox.checked) {
+                    completedChapters++;
+                }
+            });
+            const percentage = (completedChapters / MAIN_CHAPTER_IDS.length) * 100;
+            const progressBarFill = document.getElementById('readingProgressBarFill');
+            if (progressBarFill) {
+                progressBarFill.style.width = `${percentage.toFixed(0)}%`;
+                progressBarFill.innerText = `${percentage.toFixed(0)}%`;
+            }
+        }
+
+        window.updateCompetencyProgressBar = function() { // Made global
+            const storedResults = JSON.parse(localStorage.getItem('manual-quiz-results') || '[]');
+            let totalCorrectAnswersOverall = 0;
+            const TOTAL_QUESTIONS_FOR_100_PERCENT = 25; // 4% per correct answer
+
+            // Filter only final test results and sum their correct answers
+            storedResults.forEach(quiz => {
+                if (quiz.quizId === 'final_test' && quiz.questions && Array.isArray(quiz.questions) && quiz.userSelections && Array.isArray(quiz.userSelections)) {
+                    let correctAnswersInThisAttempt = 0;
+                    quiz.questions.forEach((q, index) => {
+                        // Check if q.correctAnswerIndex exists and matches userSelection
+                        if (q.correctAnswerIndex !== undefined && quiz.userSelections[index] !== null && q.correctAnswerIndex === quiz.userSelections[index]) {
+                            correctAnswersInThisAttempt++;
+                        }
+                    });
+                    totalCorrectAnswersOverall += correctAnswersInThisAttempt;
+                }
+                // Chapter quizzes do not contribute to this specific competency bar
+            });
+
+            let competencyPercentage = (totalCorrectAnswersOverall / TOTAL_QUESTIONS_FOR_100_PERCENT) * 100;
+
+            // Cap the score at 100%
+            if (competencyPercentage > 100) {
+                competencyPercentage = 100;
+            }
+            
+            const progressBarFill = document.getElementById('competencyProgressBarFill');
+            if (progressBarFill) {
+                progressBarFill.style.width = `${competencyPercentage.toFixed(0)}%`;
+                progressBarFill.innerText = `${competencyPercentage.toFixed(0)}%`;
+            }
+        }
+
+        window.updateAllProgressBars = function() { // Made global
+            window.updateReadingProgressBar();
+            window.updateCompetencyProgressBar();
+        }
+
+        // --- Logic for Reset Confirmation Modal ---
+        window.showConfirmationModal = function() { // Made global
+            const modal = document.getElementById('confirmationModal');
+            modal.classList.add('active');
+        }
+
+        window.hideConfirmationModal = function() { // Made global
+            const modal = document.getElementById('confirmationModal');
+            modal.classList.remove('active');
+        }
+
+        window.confirmReset = function(isConfirmed) { // Made global
+            window.hideConfirmationModal();
+            if (isConfirmed) {
+                window.resetAllProgress();
+            }
+        }
+
+        window.resetAllProgress = function() { // Made global
+            localStorage.clear(); // Clears all local storage data
+            
+            // Also explicitly clear quiz states in memory
+            chapterQuizStates = {}; 
+            window.finalQuizState = null; // Clear final quiz state (declared globally in this version)
+
+            // Uncheck all checkboxes
+            MAIN_CHAPTER_IDS.forEach(id => {
+                const checkbox = document.getElementById(`checkbox-${id}`);
+                if (checkbox) {
+                    checkbox.checked = false;
+                }
+            });
+
+            // Reset all individual chapter quiz UIs
+            document.querySelectorAll('.knowledge-check-container').forEach(container => {
+                const quizDisplay = container.querySelector('.quiz-question-display');
+                const quizFeedback = container.querySelector('.knowledge-check-output');
+                const startBtn = container.querySelector('.start-quiz-btn');
+                const nextBtn = container.querySelector('.next-quiz-btn');
+                const submitBtn = container.querySelector('.submit-quiz-btn');
+
+                if (quizDisplay) quizDisplay.innerHTML = '';
+                if (quizFeedback) {
+                    quizFeedback.innerHTML = '';
+                    quizFeedback.style.display = 'none';
+                }
+                if (startBtn) {
+                    startBtn.style.display = 'flex'; // Show start button
+                    startBtn.disabled = false;
+                }
+                if (nextBtn) nextBtn.style.display = 'none';
+                if (submitBtn) submitBtn.style.display = 'none';
+            });
+            
+            // Reset final quiz UI specifically
+            const finalQuizContainer = document.getElementById('final-quiz-container');
+            if (finalQuizContainer) {
+                const finalQuizDisplay = finalQuizContainer.querySelector('.quiz-question-display');
+                const finalQuizFeedback = finalQuizContainer.querySelector('.test-feedback-output');
+                const startFinalQuizBtn = finalQuizContainer.querySelector('#start-final-quiz-btn');
+                const nextFinalQuizBtn = finalQuizContainer.querySelector('#next-final-quiz-btn');
+                const submitFinalQuizBtn = finalQuizContainer.querySelector('#submit-final-quiz-btn');
+
+                if (finalQuizDisplay) finalQuizDisplay.innerHTML = '';
+                if (finalQuizFeedback) {
+                    finalQuizFeedback.innerHTML = '';
+                    finalQuizFeedback.style.display = 'none';
+                }
+                if (startFinalQuizBtn) {
+                    startFinalQuizBtn.style.display = 'flex';
+                    startFinalQuizBtn.disabled = false;
+                }
+                if (nextFinalQuizBtn) nextFinalQuizBtn.style.display = 'none';
+                if (submitFinalQuizBtn) submitFinalQuizBtn.style.display = 'none';
+            }
+
+
+            window.updateAllProgressBars(); // Reset progress bars visually
+            window.showToast('Todo o progresso foi reiniciado!');
+        }
+
+        // --- Chatbot Logic ---
+        window.toggleChatModal = function() { // Made global
+            const chatModalOverlay = document.getElementById('chatModalOverlay');
+            chatModalOverlay.classList.toggle('active');
+            if (chatModalOverlay.classList.contains('active')) {
+                document.getElementById('chatInput').focus(); // Coloca o foco no input quando o modal abre
+                document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight; // Rola para o fim
+            }
+        }
+
+        window.addMessageToChat = function(role, text) { // Made global
             const messageBubble = document.createElement('div');
             messageBubble.classList.add('message-bubble');
             messageBubble.classList.add(role);
             messageBubble.innerText = text;
-            chatMessagesDiv.appendChild(messageBubble);
-            chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight; // Rola automaticamente para a última mensagem
+            document.getElementById('chatMessages').appendChild(messageBubble);
+            document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight; // Auto-scroll to latest message
         }
 
-        async function sendChatMessage() {
-            const userQuestion = chatInput.value.trim();
+        window.sendChatMessage = async function() { // Made global
+            const userQuestion = document.getElementById('chatInput').value.trim();
             if (!userQuestion) return;
 
-            addMessageToChat('user', userQuestion);
-            chatInput.value = ''; // Limpa o input
+            window.addMessageToChat('user', userQuestion);
+            document.getElementById('chatInput').value = ''; // Limpa o input
 
-            chatSendSpinner.classList.add('active');
-            chatSendButton.disabled = true;
+            document.getElementById('chatSendSpinner').classList.add('active');
+            document.getElementById('chatSendButton').disabled = true;
 
             // Recolhe todo o conteúdo relevante do manual para servir como contexto
-            // Isto garante que o modelo tem acesso a todas as informações para responder às perguntas.
             const allManualContentElements = document.querySelectorAll('.page:not(.cover-page) p, .page:not(.cover-page) li, .page:not(.cover-page) h2, .page:not(.cover-page) h3, .page:not(.cover-page) h4');
             let manualContext = "";
             allManualContentElements.forEach(element => {
                 manualContext += element.innerText + "\n\n";
             });
 
-            // Constrói o prompt para o modelo Gemini, incluindo o contexto do manual e a pergunta do utilizador.
-            const contextPrompt = `O seguinte texto é um manual completo sobre assessoria em marketplaces.
-            MANUAL:
-            ${manualContext}
+            let prompt;
+            if (userQuestion.toLowerCase().includes("percurso de treinamento para")) {
+                prompt = `Com base no seguinte manual de assessoria em marketplaces, crie um percurso de treinamento passo a passo, incluindo os capítulos e seções mais relevantes. O utilizador pediu: "${userQuestion}". Seja conciso e liste os passos.
 
-            Com base APENAS nas informações fornecidas no MANUAL, responda à seguinte PERGUNTA DO UTILIZADOR. Se a resposta não estiver explicitamente no manual, diga que a informação não está disponível no manual.
+MANUAL:
+${manualContext}`;
+            } else if (userQuestion.toLowerCase().includes("simular cenário") || userQuestion.toLowerCase().includes("o que faço se")) {
+                prompt = `O utilizador descreveu um cenário. Com base nas informações e diretrizes do manual, forneça uma resposta estratégica e prática para o cenário, citando seções relevantes do manual se aplicável. Cenário: "${userQuestion}".
 
-            PERGUNTA DO UTILIZADOR:
-            ${userQuestion}`;
+MANUAL:
+${manualContext}`;
+            } else {
+                // Prompt padrão para perguntas gerais
+                prompt = `O seguinte texto é um manual completo sobre assessoria em marketplaces.
+                MANUAL:
+                ${manualContext}
+
+                Com base APENAS nas informações fornecidas no MANUAL, responda à seguinte PERGUNTA DO UTILIZADOR. Se a resposta não estiver explicitamente no manual, diga que a informação não está disponível no manual.
+
+                PERGUNTA DO UTILIZADOR:
+                ${userQuestion}`;
+            }
+
 
             try {
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
@@ -659,7 +1139,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ role: "user", parts: [{ text: contextPrompt }] }]
+                        contents: [{ role: "user", parts: [{ text: prompt }] }]
                     })
                 });
 
@@ -674,22 +1154,855 @@
                     geminiResponseText = 'Desculpe, não consegui encontrar a resposta no manual ou ocorreu um problema.';
                     console.error('Resposta inesperada da API:', result);
                 }
-                addMessageToChat('gemini', geminiResponseText);
+                window.addMessageToChat('gemini', geminiResponseText);
                 chatConversationHistory.push({ role: "gemini", parts: [{ text: geminiResponseText }] });
 
             } catch (error) {
-                addMessageToChat('gemini', 'Ocorreu um erro ao comunicar com o assistente. Por favor, tente novamente.');
+                window.addMessageToChat('gemini', 'Ocorreu um erro ao comunicar com o assistente. Por favor, tente novamente.');
                 console.error('Erro na chamada da API:', error);
             } finally {
-                chatSendSpinner.classList.remove('active');
-                chatSendButton.disabled = false;
+                document.getElementById('chatSendSpinner').classList.remove('active');
+                document.getElementById('chatSendButton').disabled = false;
             }
         }
 
-        // Permite enviar a mensagem com a tecla Enter
-        chatInput.addEventListener('keypress', function(event) {
+        // --- Lógica de Verificação de Conhecimento por Capítulo (Quiz) ---
+        // Global/Chapter-specific quiz state for Multiple Choice Questions (MCQ)
+        // Key: chapterId, Value: { questions: [], currentQuestionIndex: 0, userSelections: [], chapterContent: '' }
+        let chapterQuizStates = {};
+
+        window.startChapterQuiz = async function(chapterId, contentElementIds, buttonElement) { // Made global
+            console.log(`DEBUG: startChapterQuiz called for chapter: ${chapterId}`);
+            const quizContainer = document.getElementById(`quiz-container-${chapterId}`);
+            const questionsDisplayDiv = quizContainer.querySelector('.quiz-question-display');
+            
+            // Ensure no textarea from previous attempts is left
+            let oldTextarea = quizContainer.querySelector('textarea');
+            if (oldTextarea) {
+                oldTextarea.remove();
+            }
+
+            const startButton = buttonElement;
+            const nextButton = quizContainer.querySelector('.next-quiz-btn');
+            const submitButton = quizContainer.querySelector('.submit-quiz-btn');
+            const spinner = startButton.querySelector('.loading-spinner');
+
+            // Reset UI and state for a new quiz session
+            questionsDisplayDiv.innerHTML = '<p>A gerar perguntas...</p>';
+            questionsDisplayDiv.style.display = 'block'; // Ensure it's visible
+            quizContainer.querySelector('.knowledge-check-output').innerHTML = ''; // Clear previous feedback
+            quizContainer.querySelector('.knowledge-check-output').style.display = 'none';
+
+            startButton.disabled = true;
+            spinner.classList.add('active');
+            nextButton.style.display = 'none';
+            submitButton.style.display = 'none';
+
+            // Collect content from potentially multiple elements for the chapter
+            let chapterContent = '';
+            if (Array.isArray(contentElementIds)) {
+                contentElementIds.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        chapterContent += element.innerText + '\n\n';
+                    }
+                });
+            } else {
+                const element = document.getElementById(contentElementIds);
+                if (element) {
+                    chapterContent = element.innerText;
+                }
+            }
+
+            if (!chapterContent.trim()) {
+                questionsDisplayDiv.innerHTML = '<p class="text-red-600">Conteúdo do capítulo vazio. Não é possível gerar perguntas.</p>';
+                startButton.disabled = false;
+                spinner.classList.remove('active');
+                return;
+            }
+
+            // Prompt for structured JSON output for MULTIPLE-CHOICE questions
+            const prompt = `Com base no seguinte conteúdo do capítulo do manual da Mouayed Assessoria, gere 3 perguntas de múltipla escolha. Para cada pergunta, forneça o texto da pergunta, 3 ou 4 opções de resposta (enumeradas A, B, C, D) e o índice da resposta correta (0 para A, 1 para B, etc.). Responda APENAS com um objeto JSON válido no formato:
+            {
+                "questions": [
+                    {
+                        "question": "Texto da pergunta 1?",
+                        "options": ["Opção A", "Opção B", "Opção C"],
+                        "correctAnswerIndex": 0
+                    },
+                    {
+                        "question": "Texto da pergunta 2?",
+                        "options": ["Opção A", "Opção B", "Opção C", "Opção D"],
+                        "correctAnswerIndex": 2
+                    }
+                ]
+            }
+            As perguntas e opções devem ser CLARAS e baseadas unicamente no CONTEÚDO FORNECIDO.
+
+            Conteúdo do Capítulo:
+            ${chapterContent}`;
+
+            console.log("DEBUG: Prompt enviado para a API (startChapterQuiz - MCQ):", prompt);
+
+            try {
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ role: "user", parts: [{ text: prompt }] }],
+                        generationConfig: { // Explicitly ask for JSON output
+                            responseMimeType: "application/json",
+                            responseSchema: {
+                                type: "OBJECT",
+                                properties: {
+                                    questions: {
+                                        type: "ARRAY",
+                                        items: {
+                                            type: "OBJECT",
+                                            properties: {
+                                                question: { type: "STRING" },
+                                                options: { type: "ARRAY", items: { type: "STRING" } },
+                                                correctAnswerIndex: { type: "NUMBER" }
+                                            },
+                                            required: ["question", "options", "correctAnswerIndex"]
+                                        }
+                                    }
+                                },
+                                required: ["questions"]
+                            }
+                        }
+                    })
+                });
+
+                console.log("DEBUG: Resposta bruta da rede (startChapterQuiz - MCQ):", response);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    questionsDisplayDiv.innerHTML = `<p class="text-red-600">Erro ao gerar perguntas: ${response.status} ${response.statusText}. Detalhes: ${errorText.substring(0, 200)}...</p>`;
+                    return;
+                }
+
+                let result;
+                let rawResponseText = '';
+                try {
+                    rawResponseText = await response.text();
+                    // First, try to parse the entire raw response as JSON (if responseMimeType worked)
+                    let parsedResponseRoot = JSON.parse(rawResponseText);
+
+                    // Then, check if the actual content is nested within candidates[0].content.parts[0].text
+                    // and if THAT text is a JSON string (e.g., from markdown wrapper)
+                    if (parsedResponseRoot.candidates && parsedResponseRoot.candidates.length > 0 &&
+                        parsedResponseRoot.candidates[0].content && parsedResponseRoot.candidates[0].content.parts &&
+                        parsedResponseRoot.candidates[0].content.parts.length > 0 &&
+                        typeof parsedResponseRoot.candidates[0].content.parts[0].text === 'string') {
+                        
+                        const innerJsonText = parsedResponseRoot.candidates[0].content.parts[0].text;
+                        const jsonMatch = innerJsonText.match(/```json\s*(\{[\s\S]*?\})\s*```/);
+                        if (jsonMatch && jsonMatch[1]) {
+                            // Successfully extracted JSON from markdown block
+                            result = JSON.parse(jsonMatch[1]);
+                        } else {
+                            // No markdown block, try parsing the inner text directly
+                            result = JSON.parse(innerJsonText);
+                        }
+                    } else {
+                        // If no candidates or parts, assume the root was the intended JSON
+                        result = parsedResponseRoot;
+                    }
+                    console.log("DEBUG: Resultado da API (JSON - startChapterQuiz):", result);
+
+                } catch (jsonError) {
+                    console.error(`DEBUG: Erro ao fazer parse do JSON: ${jsonError}. Resposta bruta: ${rawResponseText}`);
+                    questionsDisplayDiv.innerHTML = '<p class="text-red-600">Erro ao processar a resposta da API (JSON inválido/incompleto). Tente novamente.</p>';
+                    return;
+                }
+                
+                if (result.questions && Array.isArray(result.questions) && result.questions.length > 0) {
+                    chapterQuizStates[chapterId] = {
+                        questions: result.questions,
+                        currentQuestionIndex: 0,
+                        userSelections: new Array(result.questions.length).fill(null), // Store selected option index
+                        chapterContent: chapterContent // Store chapter content for feedback
+                    };
+                } else {
+                    questionsDisplayDiv.innerHTML = '<p class="text-red-600">A API não gerou perguntas de múltipla escolha válidas. Tente novamente.</p>';
+                    console.error('DEBUG: Resposta inesperada da API (estrutura incorreta ou vazia):', result);
+                    return;
+                }
+                
+                window.displayQuizQuestionForChapter(chapterId); // Call global version
+
+                // Update button visibility
+                startButton.style.display = 'none';
+                if (chapterQuizStates[chapterId].questions.length > 1) {
+                    nextButton.style.display = 'flex';
+                    submitButton.style.display = 'none';
+                } else {
+                    nextButton.style.display = 'none';
+                    submitButton.style.display = 'flex';
+                }
+                submitButton.disabled = false; // Enable submit button from the start if only one question
+
+            } catch (error) {
+                questionsDisplayDiv.innerHTML = '<p class="text-red-600">Erro ao gerar perguntas. Verifique a sua conexão de internet ou tente novamente.</p>';
+                console.error('DEBUG: Erro geral na chamada da API (startChapterQuiz):', error);
+            } finally {
+                spinner.classList.remove('active');
+                startButton.disabled = false; // Re-enable start button for retry
+            }
+        }
+
+        window.displayQuizQuestionForChapter = function(chapterId) { // Made global
+            console.log(`DEBUG: displayQuizQuestionForChapter called for chapter: ${chapterId}, index: ${chapterQuizStates[chapterId].currentQuestionIndex}`);
+            const quizState = chapterQuizStates[chapterId];
+            if (!quizState || quizState.currentQuestionIndex >= quizState.questions.length) {
+                console.error(`Erro: Estado do quiz ou índice de pergunta inválido para ${chapterId}`);
+                return;
+            }
+
+            const quizContainer = document.getElementById(`quiz-container-${chapterId}`);
+            const questionsDisplayDiv = quizContainer.querySelector('.quiz-question-display');
+            const nextButton = quizContainer.querySelector('.next-quiz-btn');
+            const submitButton = quizContainer.querySelector('.submit-quiz-btn');
+
+            const currentQ = quizState.questions[quizState.currentQuestionIndex];
+            let htmlContent = `<p class="question-text">Pergunta ${quizState.currentQuestionIndex + 1} de ${quizState.questions.length}:</p><p>${currentQ.question}</p><div class="quiz-options mt-4">`;
+
+            currentQ.options.forEach((option, idx) => {
+                const isChecked = quizState.userSelections[quizState.currentQuestionIndex] === idx ? 'checked' : '';
+                htmlContent += `
+                    <label>
+                        <input type="radio" name="quiz-option-${chapterId}-${quizState.currentQuestionIndex}" value="${idx}" ${isChecked}>
+                        ${String.fromCharCode(65 + idx)}. ${option}
+                    </label>
+                `;
+            });
+            htmlContent += `</div>`;
+            questionsDisplayDiv.innerHTML = htmlContent;
+
+            // Re-attach change listener for radio buttons
+            questionsDisplayDiv.querySelectorAll(`input[name="quiz-option-${chapterId}-${quizState.currentQuestionIndex}"]`).forEach(radio => {
+                radio.addEventListener('change', (event) => {
+                    quizState.userSelections[quizState.currentQuestionIndex] = parseInt(event.target.value);
+                });
+            });
+
+            // Manage button visibility
+            if (quizState.currentQuestionIndex === quizState.questions.length - 1) {
+                nextButton.style.display = 'none';
+                submitButton.style.display = 'flex'; // Show submit button on last question
+                submitButton.disabled = false;
+            } else {
+                nextButton.style.display = 'flex';
+                submitButton.style.display = 'none';
+            }
+        }
+
+        window.showNextChapterQuizQuestion = function(chapterId, buttonElement) { // Made global
+            const quizState = chapterQuizStates[chapterId];
+            if (!quizState) return;
+
+            // Ensure an option is selected before moving next
+            if (quizState.userSelections[quizState.currentQuestionIndex] === null) {
+                alert('Por favor, selecione uma opção antes de avançar.'); // Using alert for simplicity, could be a custom modal
+                return;
+            }
+
+            // Move to next question
+            if (quizState.currentQuestionIndex < quizState.questions.length - 1) {
+                quizState.currentQuestionIndex++;
+                window.displayQuizQuestionForChapter(chapterId); // Call global version
+            }
+        }
+
+        window.submitChapterQuiz = async function(chapterId, contentElementIds, buttonElement) { // Made global
+            const quizState = chapterQuizStates[chapterId];
+            if (!quizState) return;
+
+            // Ensure last question has an answer selected
+            if (quizState.userSelections[quizState.currentQuestionIndex] === null) {
+                alert('Por favor, selecione uma opção para a pergunta atual antes de submeter.');
+                return;
+            }
+
+            const feedbackOutput = document.getElementById(`quiz-feedback-${chapterId}`);
+            const submitButton = buttonElement;
+            const spinner = submitButton.querySelector('.loading-spinner');
+
+            feedbackOutput.innerHTML = 'A obter feedback e pontuação...';
+            feedbackOutput.style.display = 'block'; // Ensure feedback div is visible
+            spinner.classList.add('active');
+            submitButton.disabled = true;
+
+            // Calculate score first (system-side)
+            let correctAnswersCount = 0;
+            quizState.questions.forEach((q, index) => {
+                if (quizState.userSelections[index] === q.correctAnswerIndex) {
+                    correctAnswersCount++;
+                }
+            });
+            const finalScore = (correctAnswersCount / quizState.questions.length) * 100;
+
+            // Build detailed prompt for LLM feedback
+            let feedbackPromptDetail = `O utilizador respondeu a um quiz. Abaixo estão as perguntas, as opções, a resposta correta (índice), e a resposta que o utilizador selecionou (índice):\n\n`;
+            quizState.questions.forEach((q, index) => {
+                const selectedOptionText = q.options[quizState.userSelections[index]] || "Nenhuma resposta selecionada";
+                const correctOptionText = q.options[q.correctAnswerIndex];
+                
+                feedbackPromptDetail += `Pergunta ${index + 1}: ${q.question}\n`;
+                feedbackPromptDetail += `Opções: ${q.options.join(', ')}\n`;
+                feedbackPromptDetail += `Resposta Correta: ${correctOptionText} (Índice: ${q.correctAnswerIndex})\n`;
+                feedbackPromptDetail += `Resposta do Utilizador: ${selectedOptionText} (Índice selecionado: ${quizState.userSelections[index]})\n`;
+                feedbackPromptDetail += `Acertou: ${quizState.userSelections[index] === q.correctAnswerIndex ? 'Sim' : 'Não'}\n\n`;
+            });
+
+            const prompt = `Analise as respostas do utilizador para as perguntas de múltipla escolha fornecidas abaixo. Forneça um feedback construtivo e detalhado, justificando a correção ou incorreção de CADA RESPOSTA do utilizador com base no conteúdo do manual fornecido. Use o formato de lista para o feedback por pergunta. No final do feedback, atribua uma pontuação numérica TOTAL MÉDIA para o utilizador, no formato: (Pontuação: X/100).
+
+Conteúdo do Capítulo do Manual:
+${quizState.content}
+
+Detalhes do Quiz e Respostas do Utilizador:
+${feedbackPromptDetail}
+
+Pontuação calculada pelo sistema (apenas para sua referência interna, não precisa citar diretamente, mas seu feedback deve refletir esta precisão): ${finalScore.toFixed(0)}/100.
+`;
+
+            try {
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: prompt }] }] })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    feedbackOutput.innerHTML = `<p class="text-red-600">Erro ao obter feedback: ${response.status} ${response.statusText}. Detalhes: ${errorText.substring(0, 200)}...</p>`;
+                    return;
+                }
+
+                let result;
+                let rawResponseText = '';
+                try {
+                    rawResponseText = await response.text();
+                    result = JSON.parse(rawResponseText); // Try parsing as JSON first
+                } catch (jsonError) {
+                    // Fallback if LLM wraps in markdown for overall feedback too
+                    const jsonMatch = rawResponseText.match(/```json\s*([\s\S]*?)\s*```/);
+                    if (jsonMatch && jsonMatch[1]) {
+                        try {
+                            result = JSON.parse(jsonMatch[1]);
+                        } catch (innerJsonError) {
+                            console.error(`DEBUG: Erro ao fazer parse do JSON dentro do markdown para feedback: ${innerJsonError}. Resposta bruta: ${rawResponseText}`);
+                            feedbackOutput.innerHTML = '<p class="text-red-600">Erro ao processar o feedback da API (JSON interno inválido). Tente novamente.</p>';
+                            return;
+                        }
+                    } else {
+                        console.error(`DEBUG: Erro ao fazer parse do JSON para feedback: ${jsonError}. Resposta bruta: ${rawResponseText}`);
+                        feedbackOutput.innerHTML = '<p class="text-red-600">Erro ao processar o feedback da API (JSON inválido/incompleto). Tente novamente.</p>';
+                        return;
+                    }
+                }
+
+                let generatedFeedback = '';
+                if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                    generatedFeedback = result.candidates[0].content.parts[0].text;
+                } else {
+                    generatedFeedback = 'Não foi possível gerar feedback detalhado. Resposta da API vazia ou malformada.';
+                    console.error('Resposta inesperada da API para feedback:', result);
+                }
+                
+                feedbackOutput.innerHTML = `<p class="font-semibold text-gray-800">Feedback Detalhado:</p><p>${generatedFeedback}</p><p class="mt-4 font-bold">Sua Pontuação Final: ${finalScore.toFixed(0)}/100</p>`;
+                
+                // Save quiz result
+                window.saveQuizResult(chapterId, quizState.questions, quizState.userSelections, generatedFeedback, finalScore); // Call global version
+                window.updateCompetencyProgressBar(); // Update competency bar after quiz submission
+
+                // Hide quiz questions and buttons after submission
+                document.getElementById(`quiz-question-display-${chapterId}`).style.display = 'none';
+                document.getElementById(`next-quiz-btn-${chapterId}`).style.display = 'none';
+                submitButton.style.display = 'none';
+
+                // Re-enable start quiz button to allow retaking the quiz
+                document.getElementById(`start-quiz-btn-${chapterId}`).style.display = 'flex';
+                document.getElementById(`start-quiz-btn-${chapterId}`).disabled = false;
+
+
+            } catch (error) {
+                feedbackOutput.innerHTML = '<p class="text-red-600">Erro de comunicação ao obter feedback. Verifique a conexão.</p>';
+                console.error('Erro geral na chamada da API para feedback:', error);
+            } finally {
+                spinner.classList.remove('active');
+                submitButton.disabled = false;
+            }
+        }
+
+        // --- Local Storage for Quiz Results ---
+        window.saveQuizResult = function(quizId, questions, userSelections, feedback, score) { // Made global
+            let allQuizResults = JSON.parse(localStorage.getItem('manual-quiz-results') || '[]');
+            const existingIndex = allQuizResults.findIndex(quiz => quiz.quizId === quizId);
+            const newResult = { quizId, questions, userSelections, feedback, score, timestamp: new Date().toISOString() };
+
+            if (existingIndex > -1) {
+                allQuizResults[existingIndex] = newResult;
+            } else {
+                allQuizResults.push(newResult);
+            }
+            localStorage.setItem('manual-quiz-results', JSON.stringify(allQuizResults));
+        }
+
+        // Allow sending message with Enter key in chatbot
+        document.getElementById('chatInput').addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
-                sendChatMessage();
+                window.sendChatMessage(); // Call global version
+            }
+        });
+
+        /**
+         * FINAL QUIZ LOGIC (Global Evaluation)
+         * - Moved outside DOMContentLoaded to ensure global scope for event listeners.
+         */
+        window.finalQuizState = null; // Declare globally
+
+        window.startFinalTest = async function(buttonElement) { // Made global
+            console.log("DEBUG: startFinalTest called.");
+            const questionsDisplayDiv = document.getElementById('final-quiz-question-display');
+            const startButton = buttonElement;
+            const nextButton = document.getElementById('next-final-quiz-btn'); 
+            const submitButton = document.getElementById('submit-final-quiz-btn');
+            const spinner = startButton.querySelector('.loading-spinner');
+            const feedbackOutput = document.getElementById('final-quiz-feedback');
+
+            questionsDisplayDiv.innerHTML = '<p>A gerar perguntas para o teste final...</p>';
+            questionsDisplayDiv.style.display = 'block';
+            feedbackOutput.innerHTML = '';
+            feedbackOutput.style.display = 'none';
+            startButton.disabled = true;
+            spinner.classList.add('active');
+            nextButton.style.display = 'none';
+            submitButton.style.display = 'none';
+
+            // Collect ALL content from the manual for the final test
+            const allManualContentElements = document.querySelectorAll('.page:not(.cover-page) p, .page:not(.cover-page) li, .page:not(.cover-page) h2, .page:not(.cover-page) h3, .page:not(.cover-page) h4');
+            let allManualContent = "";
+            allManualContentElements.forEach(element => {
+                allManualContent += element.innerText + "\n\n";
+            });
+
+            if (!allManualContent.trim()) {
+                questionsDisplayDiv.innerHTML = '<p class="text-red-600">Conteúdo do manual vazio. Não é possível gerar o teste.</p>';
+                startButton.disabled = false;
+                spinner.classList.remove('active');
+                return;
+            }
+
+            const prompt = `Com base em TODO o conteúdo fornecido deste manual completo da Mouayed Assessoria, gere 5 perguntas de múltipla escolha que cubram os principais tópicos e conceitos. Para cada pergunta, forneça o texto da pergunta, 3 ou 4 opções de resposta (enumeradas A, B, C, D) e o índice da resposta correta (0 para A, 1 para B, etc.). Responda APENAS com um objeto JSON válido no formato:
+            {
+                "questions": [
+                    {
+                        "question": "Texto da pergunta 1?",
+                        "options": ["Opção A", "Opção B", "Opção C"],
+                        "correctAnswerIndex": 0
+                    },
+                    {
+                        "question": "Texto da pergunta 2?",
+                        "options": ["Opção A", "Opção B", "Opção C", "Opção D"],
+                        "correctAnswerIndex": 2
+                    }
+                ]
+            }
+            As perguntas e opções devem ser CLARAS e baseadas unicamente no CONTEÚDO TOTAL DO MANUAL.
+
+            Conteúdo Total do Manual:
+            ${allManualContent}`;
+
+            try {
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ role: "user", parts: [{ text: prompt }] }],
+                        generationConfig: {
+                            responseMimeType: "application/json",
+                            responseSchema: {
+                                type: "OBJECT",
+                                properties: {
+                                    questions: {
+                                        type: "ARRAY",
+                                        items: {
+                                            type: "OBJECT",
+                                            properties: {
+                                                question: { type: "STRING" },
+                                                options: { type: "ARRAY", items: { type: "STRING" } },
+                                                correctAnswerIndex: { type: "NUMBER" }
+                                            },
+                                            required: ["question", "options", "correctAnswerIndex"]
+                                        }
+                                    }
+                                },
+                                required: ["questions"]
+                            }
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    questionsDisplayDiv.innerHTML = `<p class="text-red-600">Erro ao gerar o teste: ${response.status} ${response.statusText}. Detalhes: ${errorText.substring(0, 200)}...</p>`;
+                    return;
+                }
+
+                let result;
+                let rawResponseText = '';
+                try {
+                    rawResponseText = await response.text();
+                    // Attempt to parse the main response as JSON.
+                    let parsedResponseRoot = JSON.parse(rawResponseText);
+
+                    if (parsedResponseRoot.candidates && parsedResponseRoot.candidates.length > 0 &&
+                        parsedResponseRoot.candidates[0].content && parsedResponseRoot.candidates[0].content.parts &&
+                        parsedResponseRoot.candidates[0].content.parts.length > 0 &&
+                        typeof parsedResponseRoot.candidates[0].content.parts[0].text === 'string') {
+                        
+                        const innerJsonText = parsedResponseRoot.candidates[0].content.parts[0].text;
+                        const jsonMatch = innerJsonText.match(/```json\s*(\{[\s\S]*?\})\s*```/);
+                        if (jsonMatch && jsonMatch[1]) {
+                            result = JSON.parse(jsonMatch[1]);
+                        } else {
+                            result = JSON.parse(innerJsonText);
+                        }
+                    } else {
+                        result = parsedResponseRoot;
+                    }
+                    console.log("DEBUG: Resultado da API (JSON - startFinalTest):", result);
+
+                } catch (jsonError) {
+                    console.error(`DEBUG: Erro ao fazer parse do JSON do teste final: ${jsonError}. Resposta bruta: ${rawResponseText}`);
+                    questionsDisplayDiv.innerHTML = '<p class="text-red-600">Erro ao processar o teste final da API (JSON inválido/incompleto). Tente novamente.</p>';
+                    return;
+                }
+                
+                if (result.questions && Array.isArray(result.questions) && result.questions.length > 0) {
+                    window.finalQuizState = { // Assign to window.finalQuizState
+                        questions: result.questions,
+                        currentQuestionIndex: 0,
+                        userSelections: new Array(result.questions.length).fill(null),
+                        allManualContent: allManualContent
+                    };
+                } else {
+                    questionsDisplayDiv.innerHTML = '<p class="text-red-600">A API não gerou perguntas de múltipla escolha válidas para o teste final. Tente novamente.</p>';
+                    console.error('DEBUG: Resposta inesperada da API (estrutura incorreta ou vazia) para teste final:', result);
+                    return;
+                }
+                
+                window.displayFinalQuizQuestion(); // Call global version
+
+                startButton.style.display = 'none';
+                if (window.finalQuizState.questions.length > 1) { // Use window.finalQuizState
+                    nextButton.style.display = 'flex';
+                    submitButton.style.display = 'none';
+                } else {
+                    nextButton.style.display = 'none';
+                    submitButton.style.display = 'flex';
+                }
+                submitButton.disabled = false;
+
+            } catch (error) {
+                questionsDisplayDiv.innerHTML = '<p class="text-red-600">Erro ao gerar o teste final. Verifique a sua conexão ou tente novamente.</p>';
+                console.error('DEBUG: Erro geral na chamada da API para teste final:', error);
+            } finally {
+                spinner.classList.remove('active');
+                startButton.disabled = false;
+            }
+        }
+
+        window.displayFinalQuizQuestion = function() { // Made global
+            if (!window.finalQuizState || window.finalQuizState.currentQuestionIndex >= window.finalQuizState.questions.length) {
+                console.error(`Erro: Estado do quiz final ou índice de pergunta inválido.`);
+                return;
+            }
+
+            const questionsDisplayDiv = document.getElementById('final-quiz-question-display');
+            const nextButton = document.getElementById('next-final-quiz-btn');
+            const submitButton = document.getElementById('submit-final-quiz-btn');
+
+            const currentQ = window.finalQuizState.questions[window.finalQuizState.currentQuestionIndex];
+            let htmlContent = `<p class="question-text">Pergunta ${window.finalQuizState.currentQuestionIndex + 1} de ${window.finalQuizState.questions.length}:</p><p>${currentQ.question}</p><div class="quiz-options mt-4">`;
+
+            currentQ.options.forEach((option, idx) => {
+                const isChecked = window.finalQuizState.userSelections[window.finalQuizState.currentQuestionIndex] === idx ? 'checked' : '';
+                htmlContent += `
+                    <label>
+                        <input type="radio" name="final-quiz-option-${window.finalQuizState.currentQuestionIndex}" value="${idx}" ${isChecked}>
+                        ${String.fromCharCode(65 + idx)}. ${option}
+                    </label>
+                `;
+            });
+            htmlContent += `</div>`;
+            questionsDisplayDiv.innerHTML = htmlContent;
+
+            questionsDisplayDiv.querySelectorAll(`input[name="final-quiz-option-${window.finalQuizState.currentQuestionIndex}"]`).forEach(radio => {
+                radio.addEventListener('change', (event) => {
+                    window.finalQuizState.userSelections[window.finalQuizState.currentQuestionIndex] = parseInt(event.target.value);
+                });
+            });
+
+            if (window.finalQuizState.currentQuestionIndex === window.finalQuizState.questions.length - 1) {
+                nextButton.style.display = 'none';
+                submitButton.style.display = 'flex';
+                submitButton.disabled = false;
+            } else {
+                nextButton.style.display = 'flex';
+                submitButton.style.display = 'none';
+            }
+        }
+
+        window.showNextFinalQuizQuestion = function(buttonElement) { // Made global
+            if (!window.finalQuizState) return;
+
+            if (window.finalQuizState.userSelections[window.finalQuizState.currentQuestionIndex] === null) {
+                alert('Por favor, selecione uma opção antes de avançar.');
+                return;
+            }
+
+            if (window.finalQuizState.currentQuestionIndex < window.finalQuizState.questions.length - 1) {
+                window.finalQuizState.currentQuestionIndex++;
+                window.displayFinalQuizQuestion();
+            }
+        }
+
+        window.submitFinalTest = async function(buttonElement) { // Made global
+            if (!window.finalQuizState) return;
+
+            if (window.finalQuizState.userSelections[window.finalQuizState.currentQuestionIndex] === null) {
+                alert('Por favor, selecione uma opção para a pergunta atual antes de submeter.');
+                return;
+            }
+
+            const feedbackOutput = document.getElementById('final-quiz-feedback');
+            const submitButton = buttonElement;
+            const spinner = submitButton.querySelector('.loading-spinner');
+
+            feedbackOutput.innerHTML = 'A obter feedback e pontuação...';
+            feedbackOutput.style.display = 'block';
+            spinner.classList.add('active');
+            submitButton.disabled = true;
+
+            let correctAnswersCount = 0;
+            window.finalQuizState.questions.forEach((q, index) => { // Use window.finalQuizState
+                if (window.finalQuizState.userSelections[index] === q.correctAnswerIndex) {
+                    correctAnswersCount++;
+                }
+            });
+            const finalScore = (correctAnswersCount / window.finalQuizState.questions.length) * 100; // Use window.finalQuizState
+
+            let feedbackPromptDetail = `O utilizador respondeu ao Teste Final. Abaixo estão as perguntas, as opções, a resposta correta (índice), e a resposta que o utilizador selecionou (índice):\n\n`;
+            window.finalQuizState.questions.forEach((q, index) => { // Use window.finalQuizState
+                const selectedOptionText = q.options[window.finalQuizState.userSelections[index]] || "Nenhuma resposta selecionada"; // Use window.finalQuizState
+                const correctOptionText = q.options[q.correctAnswerIndex];
+                
+                feedbackPromptDetail += `Pergunta ${index + 1}: ${q.question}\n`;
+                feedbackPromptDetail += `Opções: ${q.options.join(', ')}\n`;
+                feedbackPromptDetail += `Resposta Correta: ${correctOptionText} (Índice: ${q.correctAnswerIndex})\n`;
+                feedbackPromptDetail += `Resposta do Utilizador: ${selectedOptionText} (Índice selecionado: ${window.finalQuizState.userSelections[index]})\n`; // Use window.finalQuizState
+                feedbackPromptDetail += `Acertou: ${window.finalQuizState.userSelections[index] === q.correctAnswerIndex ? 'Sim' : 'Não'}\n\n`; // Use window.finalQuizState
+            });
+
+            const prompt = `Com base no conteúdo completo do manual e nos resultados das respostas do utilizador para as perguntas de múltipla escolha abaixo, forneça uma avaliação detalhada.
+            1.  **Feedback por Pergunta:** Para cada pergunta, justifique a correção ou incorreção da resposta do utilizador, baseando-se no manual.
+            2.  **Pontos Fortes Gerais:** Identifique as áreas onde o utilizador demonstrou bom conhecimento.
+            3.  **Áreas para Melhorar:** Aponte tópicos específicos que precisam de mais estudo ou revisão.
+            4.  **Sugestões de Ação:** Forneça sugestões práticas para melhorar nessas áreas (ex: "Revisar o Capítulo X, seção Y").
+            5.  **Pontuação Final:** Conclua com a pontuação total do utilizador no formato (Pontuação Final: X/100).
+
+Conteúdo Total do Manual:
+${window.finalQuizState.allManualContent}
+
+Detalhes do Teste Final e Respostas do Utilizador:
+${feedbackPromptDetail}
+
+Pontuação calculada pelo sistema (apenas para sua referência interna, seu feedback deve refletir esta precisão): ${finalScore.toFixed(0)}/100.
+`;
+
+            try {
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: prompt }] }] })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    feedbackOutput.innerHTML = `<p class="text-red-600">Erro ao obter feedback: ${response.status} ${response.statusText}. Detalhes: ${errorText.substring(0, 200)}...</p>`;
+                    return;
+                }
+
+                let result;
+                let rawResponseText = '';
+                try {
+                    rawResponseText = await response.text();
+                    result = JSON.parse(rawResponseText); // Try parsing as JSON first
+                } catch (jsonError) {
+                    // Fallback if LLM wraps in markdown
+                    const markdownMatch = rawResponseText.match(/```json\s*([\s\S]*?)\s*```/);
+                    if (markdownMatch && markdownMatch[1]) {
+                        try {
+                            result = JSON.parse(markdownMatch[1]);
+                        } catch (innerJsonError) {
+                            console.error(`DEBUG: Erro ao fazer parse do JSON dentro do markdown para feedback final: ${innerJsonError}. Resposta bruta: ${rawResponseText}`);
+                            feedbackOutput.innerHTML = '<p class="text-red-600">Erro ao processar o feedback (JSON interno inválido). Tente novamente.</p>';
+                            return;
+                        }
+                    } else {
+                        console.error(`DEBUG: Erro ao fazer parse do JSON para feedback final: ${jsonError}. Resposta bruta: ${rawResponseText}`);
+                        feedbackOutput.innerHTML = '<p class="text-red-600">Erro ao processar o feedback (JSON inválido/incompleto). Tente novamente.</p>';
+                        return;
+                    }
+                }
+
+                let generatedFeedback = '';
+                if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                    generatedFeedback = result.candidates[0].content.parts[0].text;
+                } else if (typeof result === 'string') {
+                    generatedFeedback = result;
+                } else {
+                    generatedFeedback = 'Não foi possível gerar feedback detalhado. Resposta da API vazia ou malformada.';
+                    console.error('Resposta inesperada da API para feedback:', result);
+                }
+                
+                feedbackOutput.innerHTML = `<p class="font-semibold text-gray-800">Feedback Detalhado:</p><p>${generatedFeedback}</p><p class="mt-4 font-bold">Sua Pontuação Final: ${finalScore.toFixed(0)}/100</p>`;
+                
+                // Save quiz result
+                window.saveQuizResult('final_test', window.finalQuizState.questions, window.finalQuizState.userSelections, generatedFeedback, finalScore); // Use window.finalQuizState
+                window.updateCompetencyProgressBar(); // Update competency bar after quiz submission
+
+                // Hide quiz UI after submission
+                document.getElementById('final-quiz-question-display').innerHTML = '';
+                document.getElementById('final-quiz-question-display').style.display = 'none';
+                document.getElementById('next-final-quiz-btn').style.display = 'none'; // Get by ID
+                submitButton.style.display = 'none';
+
+                // Re-enable start quiz button
+                document.getElementById('start-final-quiz-btn').style.display = 'flex'; // Get by ID
+                document.getElementById('start-final-quiz-btn').disabled = false;
+
+
+            } catch (error) {
+                feedbackOutput.innerHTML = '<p class="text-red-600">Erro de comunicação ao obter feedback. Verifique a conexão.</p>';
+                console.error('Erro geral na chamada da API para feedback:', error);
+            } finally {
+                spinner.classList.remove('active');
+                submitButton.disabled = false;
+            }
+        }
+
+        // --- Local Storage for Quiz Results ---
+        window.saveQuizResult = function(quizId, questions, userSelections, feedback, score) { // Made global
+            let allQuizResults = JSON.parse(localStorage.getItem('manual-quiz-results') || '[]');
+            const existingIndex = allQuizResults.findIndex(quiz => quiz.quizId === quizId);
+            const newResult = { quizId, questions, userSelections, feedback, score, timestamp: new Date().toISOString() };
+
+            if (existingIndex > -1) {
+                allQuizResults[existingIndex] = newResult;
+            } else {
+                allQuizResults.push(newResult);
+            }
+            localStorage.setItem('manual-quiz-results', JSON.stringify(allQuizResults));
+        }
+
+        // Allow sending message with Enter key in chatbot
+        document.getElementById('chatInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                window.sendChatMessage(); // Call global version
+            }
+        });
+
+        /**
+         * Attaches event listeners to quiz buttons after the DOM is loaded.
+         * This prevents 'ReferenceError: xxx is not defined' if the script loads before elements.
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("DOM CONTENT LOADED. Attaching quiz button listeners.");
+
+            // Start Chapter Quiz buttons
+            document.querySelectorAll('.start-quiz-btn').forEach(button => {
+                // Ensure no duplicate listeners are attached
+                // The _eventListener_start property stores the handler function.
+                if (button._eventListener_start) {
+                    button.removeEventListener('click', button._eventListener_start);
+                }
+
+                const handler = async function() {
+                    const chapterId = this.dataset.chapterId;
+                    const contentIds = this.dataset.contentIds.split(','); // Split by comma
+                    await window.startChapterQuiz(chapterId, contentIds, this); // Call global version
+                };
+                button.addEventListener('click', handler);
+                button._eventListener_start = handler; // Store the handler
+                console.log(`DEBUG: Event listener attached to start-quiz-btn for chapter: ${button.dataset.chapterId}`);
+            });
+
+            // Next Chapter Quiz buttons
+            document.querySelectorAll('.next-quiz-btn').forEach(button => {
+                if (button._eventListener_next) {
+                    button.removeEventListener('click', button._eventListener_next);
+                }
+                const handler = function() {
+                    const chapterId = this.dataset.chapterId;
+                    window.showNextChapterQuizQuestion(chapterId, this); // Call global version
+                };
+                button.addEventListener('click', handler);
+                button._eventListener_next = handler;
+                console.log(`DEBUG: Event listener attached to next-quiz-btn for chapter: ${button.dataset.chapterId}`);
+            });
+
+            // Submit Chapter Quiz buttons
+            document.querySelectorAll('.submit-quiz-btn').forEach(button => {
+                if (button._eventListener_submit) {
+                    button.removeEventListener('click', button._eventListener_submit);
+                }
+                const handler = async function() {
+                    const chapterId = this.dataset.chapterId;
+                    const contentIds = this.dataset.contentIds.split(','); // Ensure contentIds are passed correctly for context
+                    await window.submitChapterQuiz(chapterId, contentIds, this); // Call global version
+                };
+                button.addEventListener('click', handler);
+                button._eventListener_submit = handler;
+                console.log(`DEBUG: Event listener attached to submit-quiz-btn for chapter: ${button.dataset.chapterId}`);
+            });
+
+            // Final Quiz Buttons
+            const startFinalQuizBtn = document.getElementById('start-final-quiz-btn');
+            const nextFinalQuizBtn = document.getElementById('next-final-quiz-btn');
+            const submitFinalQuizBtn = document.getElementById('submit-final-quiz-btn');
+
+            // Attach listeners for final quiz buttons
+            if (startFinalQuizBtn) {
+                 if (startFinalQuizBtn._eventListener_final_start) { // Check for previous listener
+                    startFinalQuizBtn.removeEventListener('click', startFinalQuizBtn._eventListener_final_start);
+                 }
+                const handler = async function() { await window.startFinalTest(this); }; // Call global version
+                startFinalQuizBtn.addEventListener('click', handler);
+                startFinalQuizBtn._eventListener_final_start = handler; // Store this specific handler
+            }
+            if (nextFinalQuizBtn) {
+                 if (nextFinalQuizBtn._eventListener_final_next) {
+                    nextFinalQuizBtn.removeEventListener('click', nextFinalQuizBtn._eventListener_final_next);
+                 }
+                const handler = function() { window.showNextFinalQuizQuestion(this); }; // Call global version
+                nextFinalQuizBtn.addEventListener('click', handler);
+                nextFinalQuizBtn._eventListener_final_next = handler; // Store this specific handler
+            }
+            if (submitFinalQuizBtn) {
+                 if (submitFinalQuizBtn._eventListener_final_submit) {
+                    submitFinalQuizBtn.removeEventListener('click', submitFinalQuizBtn._eventListener_final_submit);
+                 }
+                const handler = async function() { await window.submitFinalTest(this); }; // Call global version
+                submitFinalQuizBtn.addEventListener('click', handler);
+                submitFinalQuizBtn._eventListener_final_submit = handler; // Store this specific handler
             }
         });
     </script>
